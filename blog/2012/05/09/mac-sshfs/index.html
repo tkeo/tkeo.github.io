@@ -1,0 +1,273 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Macでsshfsを使う - blog.tkeo.info</title>
+  <meta name="author" content="tkeo">
+
+  
+  <meta name="description" content="なんかぐぐるとMacFUSEを入れる方法ばっかり出てくるけど、brewで入れるのであれば不要。 1
+2
+3
+4
+5
+6
+7
+$ brew install sshfs
+(略)
+==&gt; Caveats
+Make sure to follow the directions given by ` &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.tkeo.info/blog/2012/05/09/mac-sshfs">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="blog.tkeo.info" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">blog.tkeo.info</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.tkeo.info" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Macでsshfsを使う</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2012-05-09T02:12:41+09:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>2:12 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>なんかぐぐるとMacFUSEを入れる方法ばっかり出てくるけど、brewで入れるのであれば不要。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install sshfs
+</span><span class='line'>(略)
+</span><span class='line'>==&gt; Caveats
+</span><span class='line'>Make sure to follow the directions given by `brew info fuse4x-kext`
+</span><span class='line'>before trying to use a FUSE-based filesystem.
+</span><span class='line'>==&gt; Summary
+</span><span class='line'>/usr/local/Cellar/sshfs/2.3.0: 7 files, 120K, built in 12 seconds</span></code></pre></td></tr></table></div></figure>
+
+
+<p>installすると上のように言われるので指示に従う。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew info fuse4x-kext
+</span><span class='line'>fuse4x-kext 0.8.14
+</span><span class='line'>http://fuse4x.org/
+</span><span class='line'>/usr/local/Cellar/fuse4x-kext/0.8.14 (7 files, 312K)
+</span><span class='line'>
+</span><span class='line'>In order for FUSE-based filesystems to work, the fuse4x kernel extension
+</span><span class='line'>must be installed by the root user:
+</span><span class='line'>
+</span><span class='line'>  sudo cp -rfX /usr/local/Cellar/fuse4x-kext/0.8.14/Library/Extensions/fuse4x.kext /System/Library/Extensions
+</span><span class='line'>  sudo chmod +s /System/Library/Extensions/fuse4x.kext/Support/load_fuse4x
+</span><span class='line'>
+</span><span class='line'>If upgrading from a previous version of Fuse4x, the old kernel extension
+</span><span class='line'>will need to be unloaded before performing the steps listed above. First,
+</span><span class='line'>check that no FUSE-based filesystems are running:
+</span><span class='line'>
+</span><span class='line'>  mount | grep fuse4x
+</span><span class='line'>
+</span><span class='line'>Unmount all FUSE filesystems and then unload the kernel extension:
+</span><span class='line'>
+</span><span class='line'>  sudo kextunload -b org.fuse4x.kext.fuse4x
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>http://github.com/mxcl/homebrew/commits/master/Library/Formula/fuse4x-kext.rb</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上のsudoコマンド2つを叩くだけで使えるようになる(下の方はアップグレードのときに実行するらしい)</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">tkeo</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2012-05-09T02:12:41+09:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>2:12 am</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://blog.tkeo.info/blog/2012/05/09/mac-sshfs/" data-via="" data-counturl="http://blog.tkeo.info/blog/2012/05/09/mac-sshfs/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/11/15/login-tmux/" title="Next Post: ログイン直後にtmuxを起動する">ログイン直後にtmuxを起動する &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/02/05/diary/">日記</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/01/17/rails4-minitest-spork-guard/">Rails4 で MiniTest + Spork + Guard</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/01/09/ruby2-rails4-new-project/">Ruby2.0+Rails4で新規プロジェクトを作成したメモ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/15/login-tmux/">ログイン直後にtmuxを起動する</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/05/09/mac-sshfs/">Macでsshfsを使う</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - tkeo -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
