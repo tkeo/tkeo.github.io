@@ -4,7 +4,7 @@
   <title><![CDATA[blog.tkeo.info]]></title>
   <link href="http://tkeo.github.io/atom.xml" rel="self"/>
   <link href="http://tkeo.github.io/"/>
-  <updated>2014-12-09T02:57:12+09:00</updated>
+  <updated>2014-12-09T03:21:28+09:00</updated>
   <id>http://tkeo.github.io/</id>
   <author>
     <name><![CDATA[tkeo]]></name>
@@ -20,6 +20,26 @@
     <id>http://tkeo.github.io/blog/2014/12/09/moved</id>
     <content type="html"><![CDATA[<p>hatenablogから引っ越してきた。
 octopressお手軽でいい感じ。</p>
+
+<p>zshだと<code>rake new_post</code>のときにglob展開しようとして怒られるので、noglobをつける。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ rake new_post['hoge']
+</span><span class='line'>zsh: no matches found: new_post[hoge]
+</span><span class='line'>$ noglob rake new_post['hoge']
+</span><span class='line'>mkdir -p source/_posts
+</span><span class='line'>Creating new post: source/_posts/2014-12-09-hoge.markdown</span></code></pre></td></tr></table></div></figure>
+
+
+<p>面倒なのでaliasを書いてしまった。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>alias rake='noglob rake'</span></code></pre></td></tr></table></div></figure>
+
 ]]></content>
   </entry>
   
