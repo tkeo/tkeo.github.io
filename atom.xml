@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[blog.tkeo.info]]></title>
-  <link href="http://blog.tkeo.info/atom.xml" rel="self"/>
-  <link href="http://blog.tkeo.info/"/>
-  <updated>2014-12-08T08:20:21+09:00</updated>
-  <id>http://blog.tkeo.info/</id>
+  <link href="http://tkeo.github.io/atom.xml" rel="self"/>
+  <link href="http://tkeo.github.io/"/>
+  <updated>2014-12-09T02:57:12+09:00</updated>
+  <id>http://tkeo.github.io/</id>
   <author>
     <name><![CDATA[tkeo]]></name>
     
@@ -14,10 +14,20 @@
 
   
   <entry>
+    <title type="html"><![CDATA[ブログ引っ越し]]></title>
+    <link href="http://tkeo.github.io/blog/2014/12/09/moved/"/>
+    <updated>2014-12-09T02:38:53+09:00</updated>
+    <id>http://tkeo.github.io/blog/2014/12/09/moved</id>
+    <content type="html"><![CDATA[<p>hatenablogから引っ越してきた。
+octopressお手軽でいい感じ。</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[日記]]></title>
-    <link href="http://blog.tkeo.info/blog/2013/02/05/diary/"/>
+    <link href="http://tkeo.github.io/blog/2013/02/05/diary/"/>
     <updated>2013-02-05T01:13:48+09:00</updated>
-    <id>http://blog.tkeo.info/blog/2013/02/05/diary</id>
+    <id>http://tkeo.github.io/blog/2013/02/05/diary</id>
     <content type="html"><![CDATA[<p>railsアプリ開発中にmigrationでエラーが起こって、一部だけ変更が適用された戻すのがめんどくさい中途半端な状態になることがよくあって今日もうぎゃーってなったので、トランザクションで囲んでくれるような仕組みないのかなと思って調べてみると</p>
 
 <p><a href="http://guides.rubyonrails.org/migrations.html">http://guides.rubyonrails.org/migrations.html</a></p>
@@ -49,9 +59,9 @@
   
   <entry>
     <title type="html"><![CDATA[Rails4 で MiniTest + Spork + Guard]]></title>
-    <link href="http://blog.tkeo.info/blog/2013/01/17/rails4-minitest-spork-guard/"/>
+    <link href="http://tkeo.github.io/blog/2013/01/17/rails4-minitest-spork-guard/"/>
     <updated>2013-01-17T14:33:15+09:00</updated>
-    <id>http://blog.tkeo.info/blog/2013/01/17/rails4-minitest-spork-guard</id>
+    <id>http://tkeo.github.io/blog/2013/01/17/rails4-minitest-spork-guard</id>
     <content type="html"><![CDATA[<p>正式版が出る頃には変わっている可能性が高いが、現時点でのメモを残しておく。</p>
 
 <h2>minitest-rails</h2>
@@ -294,9 +304,9 @@ end
   
   <entry>
     <title type="html"><![CDATA[Ruby2.0+Rails4で新規プロジェクトを作成したメモ]]></title>
-    <link href="http://blog.tkeo.info/blog/2013/01/09/ruby2-rails4-new-project/"/>
+    <link href="http://tkeo.github.io/blog/2013/01/09/ruby2-rails4-new-project/"/>
     <updated>2013-01-09T13:32:37+09:00</updated>
-    <id>http://blog.tkeo.info/blog/2013/01/09/ruby2-rails4-new-project</id>
+    <id>http://tkeo.github.io/blog/2013/01/09/ruby2-rails4-new-project</id>
     <content type="html"><![CDATA[<h2>前準備</h2>
 
 <pre><code>$ brew install openssl
@@ -385,9 +395,9 @@ gem 'rails', github: 'rails/rails'
   
   <entry>
     <title type="html"><![CDATA[ログイン直後にtmuxを起動する]]></title>
-    <link href="http://blog.tkeo.info/blog/2012/11/15/login-tmux/"/>
+    <link href="http://tkeo.github.io/blog/2012/11/15/login-tmux/"/>
     <updated>2012-11-15T14:15:22+09:00</updated>
-    <id>http://blog.tkeo.info/blog/2012/11/15/login-tmux</id>
+    <id>http://tkeo.github.io/blog/2012/11/15/login-tmux</id>
     <content type="html"><![CDATA[<p>SHLVLっていう環境変数があることを知ったので、.zshrcに以下を追記してログイン直後にtmuxを起動するようにしてみた。</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -402,9 +412,9 @@ gem 'rails', github: 'rails/rails'
   
   <entry>
     <title type="html"><![CDATA[Macでsshfsを使う]]></title>
-    <link href="http://blog.tkeo.info/blog/2012/05/09/mac-sshfs/"/>
+    <link href="http://tkeo.github.io/blog/2012/05/09/mac-sshfs/"/>
     <updated>2012-05-09T02:12:41+09:00</updated>
-    <id>http://blog.tkeo.info/blog/2012/05/09/mac-sshfs</id>
+    <id>http://tkeo.github.io/blog/2012/05/09/mac-sshfs</id>
     <content type="html"><![CDATA[<p>なんかぐぐるとMacFUSEを入れる方法ばっかり出てくるけど、brewで入れるのであれば不要。</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

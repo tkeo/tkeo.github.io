@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://blog.tkeo.info/sitemap.xml 
+Sitemap: http://tkeo.github.io/sitemap.xml 

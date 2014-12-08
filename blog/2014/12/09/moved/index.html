@@ -5,11 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>日記 - blog.tkeo.info</title>
+  <title>ブログ引っ越し - blog.tkeo.info</title>
   <meta name="author" content="tkeo">
 
   
-  <meta name="description" content="railsアプリ開発中にmigrationでエラーが起こって、一部だけ変更が適用された戻すのがめんどくさい中途半端な状態になることがよくあって今日もうぎゃーってなったので、トランザクションで囲んでくれるような仕組みないのかなと思って調べてみると http://guides.rubyonrails. &hellip;">
+  <meta name="description" content="hatenablogから引っ越してきた。
+octopressお手軽でいい感じ。
+">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tkeo.github.io/blog/2013/02/05/diary">
+  <link rel="canonical" href="http://tkeo.github.io/blog/2014/12/09/moved">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="blog.tkeo.info" type="application/atom+xml">
@@ -66,7 +68,7 @@
   
   <header>
     
-      <h1 class="entry-title">日記</h1>
+      <h1 class="entry-title">ブログ引っ越し</h1>
     
     
       <p class="meta">
@@ -75,39 +77,15 @@
 
 
 
-<time class='entry-date' datetime='2013-02-05T01:13:48+09:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>1:13 am</span></time>
+<time class='entry-date' datetime='2014-12-09T02:38:53+09:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>2:38 am</span></time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>railsアプリ開発中にmigrationでエラーが起こって、一部だけ変更が適用された戻すのがめんどくさい中途半端な状態になることがよくあって今日もうぎゃーってなったので、トランザクションで囲んでくれるような仕組みないのかなと思って調べてみると</p>
-
-<p><a href="http://guides.rubyonrails.org/migrations.html">http://guides.rubyonrails.org/migrations.html</a></p>
-
-<blockquote><p>On databases that support transactions with statements that change the schema (such as PostgreSQL or SQLite3), migrations are wrapped in a transaction. If the database does not support this (for example MySQL) then when a migration fails the parts of it that succeeded will not be rolled back. You will have to rollback the changes that were made by hand.</p></blockquote>
-
-<p>なんだってー</p>
-
-<p>postgresはデフォルトで対応しているが、mysqlはサポートされてなくて非対応。知らなかった…。</p>
-
-<p>一応mysqlのドキュメントにもあたってみる。</p>
-
-<p><a href="http://dev.mysql.com/doc/refman/5.6/en/cannot-roll-back.html">http://dev.mysql.com/doc/refman/5.6/en/cannot-roll-back.html</a></p>
-
-<blockquote><p>Some statements cannot be rolled back. In general, these include data definition language (DDL) statements, such as those that create or drop databases, those that create, drop, or alter tables or stored routines.</p></blockquote>
-
-<p>DDLはロールバックできない、と。</p>
-
-<p>開発環境だけDBサーバ変えるとかしたくないし、どうしたらいいかなあ。</p>
-
-<p>という日記。</p>
-
-<h2>追記</h2>
-
-<p><code>change_table</code>で<code>bulk: true</code>オプションを付けてあげればいいらしい。
-ひとつのALTERでまとめてカラム追加・削除されるので中途半端な状態は作られない。</p>
+<div class="entry-content"><p>hatenablogから引っ越してきた。
+octopressお手軽でいい感じ。</p>
 </div>
 
 
@@ -123,7 +101,7 @@
 
 
 
-<time class='entry-date' datetime='2013-02-05T01:13:48+09:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>1:13 am</span></time>
+<time class='entry-date' datetime='2014-12-09T02:38:53+09:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>2:38 am</span></time>
       
 
 
@@ -131,7 +109,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://tkeo.github.io/blog/2013/02/05/diary/" data-via="" data-counturl="http://tkeo.github.io/blog/2013/02/05/diary/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://tkeo.github.io/blog/2014/12/09/moved/" data-via="" data-counturl="http://tkeo.github.io/blog/2014/12/09/moved/" >Tweet</a>
   
   
   
@@ -140,10 +118,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/01/17/rails4-minitest-spork-guard/" title="Previous Post: Rails4 で MiniTest + Spork + Guard">&laquo; Rails4 で MiniTest + Spork + Guard</a>
+        <a class="basic-alignment left" href="/blog/2013/02/05/diary/" title="Previous Post: 日記">&laquo; 日記</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/12/09/moved/" title="Next Post: ブログ引っ越し">ブログ引っ越し &raquo;</a>
       
     </p>
   </footer>
