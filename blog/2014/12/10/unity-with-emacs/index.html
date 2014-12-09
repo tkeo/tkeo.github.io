@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>blog.tkeo.info</title>
+  <title>EmacsでUnity開発をする - blog.tkeo.info</title>
   <meta name="author" content="tkeo">
 
   
@@ -20,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tkeo.github.io">
+  <link rel="canonical" href="http://tkeo.github.io/blog/2014/12/10/unity-with-emacs">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="blog.tkeo.info" type="application/atom+xml">
@@ -63,15 +63,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2014/12/10/unity-with-emacs/">EmacsでUnity開発をする</a></h1>
+      <h1 class="entry-title">EmacsでUnity開発をする</h1>
     
     
       <p class="meta">
@@ -87,7 +84,7 @@
   </header>
 
 
-  <div class="entry-content"><p>これは<a href="http://www.adventar.org/calendars/518">ドリコム Advent Calendar 2014</a>の10日目の記事です。</p>
+<div class="entry-content"><p>これは<a href="http://www.adventar.org/calendars/518">ドリコム Advent Calendar 2014</a>の10日目の記事です。</p>
 
 <p>9日目は<a href="https://twitter.com/y05_net">@hiracy</a>さんによる<a href="http://qiita.com/y05_net/items/c8bfb69ff624d4b711e4">サーバが増えた時にインフラ担当者がやってきたこと</a>です。</p>
 
@@ -393,632 +390,46 @@
 </ul>
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/12/09/moved/">ブログ引っ越し</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2014-12-09T02:38:53+09:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>2:38 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>hatenablogから引っ越してきた。
-octopressお手軽でいい感じ。</p>
-
-<p>zshだと<code>rake new_post</code>のときにglob展開しようとして怒られるので、noglobをつける。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ rake new_post['hoge']
-</span><span class='line'>zsh: no matches found: new_post[hoge]
-</span><span class='line'>$ noglob rake new_post['hoge']
-</span><span class='line'>mkdir -p source/_posts
-</span><span class='line'>Creating new post: source/_posts/2014-12-09-hoge.markdown</span></code></pre></td></tr></table></div></figure>
-
-
-<p>面倒なのでaliasを書いてしまった。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>alias rake='noglob rake'</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
   
 
+<span class="byline author vcard">Posted by <span class="fn">tkeo</span></span>
 
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/02/05/diary/">日記</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
 
-<time class='entry-date' datetime='2013-02-05T01:13:48+09:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>1:13 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>railsアプリ開発中にmigrationでエラーが起こって、一部だけ変更が適用された戻すのがめんどくさい中途半端な状態になることがよくあって今日もうぎゃーってなったので、トランザクションで囲んでくれるような仕組みないのかなと思って調べてみると</p>
-
-<p><a href="http://guides.rubyonrails.org/migrations.html">http://guides.rubyonrails.org/migrations.html</a></p>
-
-<blockquote><p>On databases that support transactions with statements that change the schema (such as PostgreSQL or SQLite3), migrations are wrapped in a transaction. If the database does not support this (for example MySQL) then when a migration fails the parts of it that succeeded will not be rolled back. You will have to rollback the changes that were made by hand.</p></blockquote>
-
-<p>なんだってー</p>
-
-<p>postgresはデフォルトで対応しているが、mysqlはサポートされてなくて非対応。知らなかった…。</p>
-
-<p>一応mysqlのドキュメントにもあたってみる。</p>
-
-<p><a href="http://dev.mysql.com/doc/refman/5.6/en/cannot-roll-back.html">http://dev.mysql.com/doc/refman/5.6/en/cannot-roll-back.html</a></p>
-
-<blockquote><p>Some statements cannot be rolled back. In general, these include data definition language (DDL) statements, such as those that create or drop databases, those that create, drop, or alter tables or stored routines.</p></blockquote>
-
-<p>DDLはロールバックできない、と。</p>
-
-<p>開発環境だけDBサーバ変えるとかしたくないし、どうしたらいいかなあ。</p>
-
-<p>という日記。</p>
-
-<h2>追記</h2>
-
-<p><code>change_table</code>で<code>bulk: true</code>オプションを付けてあげればいいらしい。
-ひとつのALTERでまとめてカラム追加・削除されるので中途半端な状態は作られない。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+<time class='entry-date' datetime='2014-12-10T06:00:00+09:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:00 am</span></time>
       
-  <header>
+
+
+    </p>
     
-      <h1 class="entry-title"><a href="/blog/2013/01/17/rails4-minitest-spork-guard/">Rails4 で MiniTest + Spork + Guard</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2013-01-17T14:33:15+09:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>2:33 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>正式版が出る頃には変わっている可能性が高いが、現時点でのメモを残しておく。</p>
-
-<h2>minitest-rails</h2>
-
-<p><a href="https://github.com/blowmage/minitest-rails">https://github.com/blowmage/minitest-rails</a></p>
-
-<p>Gemfile に追加。</p>
-
-<pre><code>gem "minitest-rails"
-</code></pre>
-
-<p>必要なファイルを生成。</p>
-
-<pre><code>$ rails generate mini_test:install
-</code></pre>
-
-<p>test/minitest_helper.rb が生成される。</p>
-
-<pre><code>ENV["RAILS_ENV"] = "test"
-require File.expand_path('../../config/environment', __FILE__)
-
-require "minitest/autorun"
-require "minitest/rails"
-
-# Add `gem "minitest/rails/capybara"` to the test group of your Gemfile
-# and uncomment the following if you want Capybara feature tests
-# require "minitest/rails/capybara"
-
-# Uncomment if you want awesome colorful output
-# require "minitest/pride"
-
-class ActiveSupport::TestCase
-  # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
-  fixtures :all
-
-  # Add more helper methods to be used by all tests here...
-end
-</code></pre>
-
-<p>各testファイルでこれを読み込むために下の一行が必要。</p>
-
-<pre><code>require 'minitest_helper'
-</code></pre>
-
-<p>動作確認。</p>
-
-<pre><code>$ ruby -Itest test/foo/bar_test.rb
-</code></pre>
-
-<h2>spork-minitest</h2>
-
-<p><a href="https://github.com/semaperepelitsa/spork-minitest">https://github.com/semaperepelitsa/spork-minitest</a></p>
-
-<p>Gemfile に追加。</p>
-
-<pre><code>gem "spork", "~&gt; 1.0rc"
-gem "spork-minitest", "~&gt; 1.0.0.beta1"
-</code></pre>
-
-<p>下記コマンドを実行し、minitest_helper に spork 向けの設定を追加する。</p>
-
-<pre><code>$ spork minitest --bootstrap
-</code></pre>
-
-<p>test/minitest_helper.rb に追記されるので適宜編集する。</p>
-
-<pre><code>$LOAD_PATH &lt;&lt; "test"
-require 'rubygems'
-require 'spork'
-#uncomment the following line to use spork with the debugger
-#require 'spork/ext/ruby-debug'
-
-Spork.prefork do
-  # Loading more in this block will cause your tests to run faster. However,
-  # if you change any configuration or code from libraries loaded here, you'll
-  # need to restart spork for it take effect.
-
-  ENV["RAILS_ENV"] = "test"
-  require File.expand_path('../../config/environment', __FILE__)
-
-  require "minitest/autorun"
-  require "minitest/rails"
-  require 'simplecov'
-  require 'simplecov-rcov'
-
-  SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
-  SimpleCov.start 'rails'
-
-  # Add `gem "minitest/rails/capybara"` to the test group of your Gemfile
-  # and uncomment the following if you want Capybara feature tests
-  # require "minitest/rails/capybara"
-
-  # Uncomment if you want awesome colorful output
-  # require "minitest/pride"
-
-  class ActiveSupport::TestCase
-    # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
-    fixtures :all
-
-    # Add more helper methods to be used by all tests here...
-  end
-end
-
-Spork.each_run do
-  # This code will be run each time you run your specs.
-
-end
-
-# --- Instructions ---
-# Sort the contents of this file into a Spork.prefork and a Spork.each_run
-# block.
-#
-# The Spork.prefork block is run only once when the spork server is started.
-# You typically want to place most of your (slow) initializer code in here, in
-# particular, require'ing any 3rd-party gems that you don't normally modify
-# during development.
-#
-# The Spork.each_run block is run each time you run your specs.  In case you
-# need to load files that tend to change during development, require them here.
-# With Rails, your application modules are loaded automatically, so sometimes
-# this block can remain empty.
-#
-# Note: You can modify files loaded *from* the Spork.each_run block without
-# restarting the spork server.  However, this file itself will not be reloaded,
-# so if you change any of the code inside the each_run block, you still need to
-# restart the server.  In general, if you have non-trivial code in this file,
-# it's advisable to move it into a separate file so you can easily edit it
-# without restarting spork.  (For example, with RSpec, you could move
-# non-trivial code into a file spec/support/my_helper.rb, making sure that the
-# spec/support/* files are require'd from inside the each_run block.)
-#
-# Any code that is left outside the two blocks will be run during preforking
-# *and* during each_run -- that's probably not what you want.
-#
-# These instructions should self-destruct in 10 seconds.  If they don't, feel
-# free to delete them.
-</code></pre>
-
-<p>sporkの動作確認をする。</p>
-
-<pre><code>$ spork
-</code></pre>
-
-<p>sporkを立ち上げた状態のまま、別窓を開いて testdrb でテスト実行してみる。</p>
-
-<pre><code>$ testdrb test/**/*.rb
-</code></pre>
-
-<h2>guard-minitest</h2>
-
-<p><a href="https://github.com/guard/guard-minitest">https://github.com/guard/guard-minitest</a></p>
-
-<p>本家のものを使いたいところではあるが、sporkと組み合わせた時に動かないので一旦他の人が作ったブランチを使わせてもらう。
-(ref. <a href="https://github.com/guard/guard-minitest/pull/41">https://github.com/guard/guard-minitest/pull/41</a>)</p>
-
-<p>sporkを使わないのであれば本家のものでもおそらく問題ない。</p>
-
-<p>Gemfile に追加。</p>
-
-<pre><code>gem "guard-minitest", github: "itrcdevs/guard-minitest", branch: "fix_for_spork-minitest"
-</code></pre>
-
-<p>設定ファイルを生成する。すでにファイルが存在する場合は内容が追記される。</p>
-
-<pre><code>$ guard init minitest
-</code></pre>
-
-<p>生成された Guardfile を編集する。</p>
-
-<pre><code># More info at https://github.com/guard/guard#readme
-
-guard 'minitest' do
-  # with Minitest
-  watch(%r|^test/(.*)_test\.rb|)
-  watch(%r|^lib/(.*)([^/]+)\.rb|)     { |m| "test/#{m[1]}test_#{m[2]}.rb" }
-  watch(%r|^test/test_helper\.rb|)    { "test" }
-
-  # Rails
-  watch(%r|^app/controllers/(.*)\.rb|) { |m| "test/controllers/#{m[1]}_test.rb" }
-  watch(%r|^app/helpers/(.*)\.rb|)     { |m| "test/helpers/#{m[1]}_test.rb" }
-  watch(%r|^app/models/(.*)\.rb|)      { |m| "test/models/#{m[1]}_test.rb" }
-end
-</code></pre>
-
-<p>guard の動作確認。</p>
-
-<pre><code>$ guard
-</code></pre>
-
-<p>適当にファイルをtouchしてみるとテストが走るはず。
-何も起こらない場合はちゃんと監視対象に入っているか記述を見なおしてみる。</p>
-
-<h2>guard-spork</h2>
-
-<p>Gemfile に追加。</p>
-
-<pre><code>gem "guard-spork"
-</code></pre>
-
-<p>Guardfile に設定を追加する。</p>
-
-<pre><code>$ guard init spork
-</code></pre>
-
-<p>Guardfile に追加された spork の箇所の編集と、minitest で drb を使うように変更する。</p>
-
-<pre><code>guard 'spork', minitest: true, minitest_env: { 'RAILS_ENV' =&gt; 'test' }, bundler: true do
-  watch('config/application.rb')
-  watch('config/environment.rb')
-  watch('config/environments/test.rb')
-  watch(%r{^config/initializers/.+\.rb$})
-  watch('Gemfile')
-  watch('Gemfile.lock')
-  watch('test/minitest_helper.rb') { 'test' }
-end
-
-guard 'minitest', drb: true do
-  # (省略)
-end
-</code></pre>
-
-<p>実行。</p>
-
-<pre><code>$ guard
-</code></pre>
-
-<p>これだけで spork が自動的に起動する。
-先と同じようにファイルを編集したときに動けばOK</p>
-
-<h2>その他</h2>
-
-<ul>
-<li>factory_firl_rails を入れると mintiest 用のgeneratorがちゃんと動かない (追記：githubのmasterは修正されてた)</li>
-<li>まだプロジェクトの規模が小さいのでsporkの恩恵を感じられない…</li>
-<li>spork-rails が必要かと思ってrails4ブランチも含めて試してみたが要らなかった（入れると逆にダメになる）</li>
-</ul>
-
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://tkeo.github.io/blog/2014/12/10/unity-with-emacs/" data-via="" data-counturl="http://tkeo.github.io/blog/2014/12/10/unity-with-emacs/" >Tweet</a>
+  
+  
+  
 </div>
-  
-  
 
-
-    </article>
-  
-  
-    <article>
+    
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/01/09/ruby2-rails4-new-project/">Ruby2.0+Rails4で新規プロジェクトを作成したメモ</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2013-01-09T13:32:37+09:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>1:32 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>前準備</h2>
-
-<pre><code>$ brew install openssl
-$ brew link openssl
-$ brew install readline
-$ brew link readline
-</code></pre>
-
-<p>プロジェクトのディレクトリ作る。</p>
-
-<pre><code>$ mkdir hoge &amp;&amp; cd hoge
-</code></pre>
-
-<h2>ruby</h2>
-
-<p>ruby 2.0.0-devを入れる。</p>
-
-<pre><code>$ CONFIGURE_OPTS="--with-openssl-dir=`brew --prefix openssl` --with-readline-dir=`brew --prefix readline`" rbenv install 2.0.0-dev
-$ rbenv local 2.0.0-dev
-</code></pre>
-
-<p>bundlerのバージョンが1.2だと怒られるので1.3を入れる。</p>
-
-<pre><code>$ gem install bundler -v 1.3.0.pre.4
-</code></pre>
-
-<h2>rails</h2>
-
-<p>一旦Gemfileにrailsだけ書いてbundle installする。 まだrails 4.0のgemがないのでgithubから取ってくるように指定。</p>
-
-<pre><code>$ cat Gemfile
-source :rubygems
-gem 'rails', github: 'rails/rails'
-</code></pre>
-
-<p>bundle installを実行し、まずrails本体だけ入れる。</p>
-
-<pre><code>$ bundle install
-</code></pre>
-
-<p>rails newしていろいろファイルを生成。Gemfileを上書きするか聞かれるので Y で上書き。</p>
-
-<pre><code>$ bundle exec rails new . -d mysql -T --skip-bundle --edge
-</code></pre>
-
-<p>再度bundle install</p>
-
-<pre><code>$ bundle install
-</code></pre>
-
-<p>これで完了。あとはいつもどおりDBを作って…</p>
-
-<pre><code>$ bundle exec rake db:create
-</code></pre>
-
-<p>起動する。</p>
-
-<pre><code> $ bundle exec rails s
-=&gt; Booting WEBrick
-=&gt; Rails 4.0.0.beta application starting in development on http://0.0.0.0:3000
-=&gt; Call with -d to detach
-=&gt; Ctrl-C to shutdown server
-        SECURITY WARNING: No secret option provided to Rack::Session::Cookie.
-        This poses a security threat. It is strongly recommended that you
-        provide a secret to prevent exploits that may be possible from crafted
-        cookies. This will not be supported in future versions of Rack, and
-        future versions will even invalidate your existing user cookies.
-
-        Called from: xxx/ruby/2.0.0/bundler/gems/rails-e63e280bed3a/actionpack/lib/action_dispatch/middleware/session/abstract_store.rb:24:in `initialize'.
-[2013-01-07 19:35:35] INFO  WEBrick 1.3.1
-[2013-01-07 19:35:35] INFO  ruby 2.0.0 (2013-01-07) [x86_64-darwin11.4.2]
-[2013-01-07 19:35:35] INFO  WEBrick::HTTPServer#start: pid=76843 port=3000
-</code></pre>
-
-<p>なにやらWARNING出てるけど、とりあえずwelcome画面が出た。</p>
-
-<h2>参考</h2>
-
-<ul>
-<li><a href="http://blog.katsuma.tv/2013/01/ruby2.0_rails4.html">Ruby2.0 + Rails4 なアプリを作成する - blog.katsuma.tv</a></li>
-<li><a href="http://d.hatena.ne.jp/deeeki/20121124/rails4_1st_impression">Rails4 beta さわってみたメモ #railshackathon - 130単位</a></li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+        <a class="basic-alignment left" href="/blog/2014/12/09/moved/" title="Previous Post: ブログ引っ越し">&laquo; ブログ引っ越し</a>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/11/15/login-tmux/">ログイン直後にtmuxを起動する</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2012-11-15T14:15:22+09:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>2:15 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>SHLVLっていう環境変数があることを知ったので、.zshrcに以下を追記してログイン直後にtmuxを起動するようにしてみた。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>if [ $SHLVL = 1 ]; then
-</span><span class='line'>  tmux attach || tmux new
-</span><span class='line'>fi</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/09/mac-sshfs/">Macでsshfsを使う</a></h1>
-    
-    
-      <p class="meta">
-        
+    </p>
+  </footer>
+</article>
 
-
-
-
-<time class='entry-date' datetime='2012-05-09T02:12:41+09:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>2:12 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>なんかぐぐるとMacFUSEを入れる方法ばっかり出てくるけど、brewで入れるのであれば不要。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install sshfs
-</span><span class='line'>(略)
-</span><span class='line'>==&gt; Caveats
-</span><span class='line'>Make sure to follow the directions given by `brew info fuse4x-kext`
-</span><span class='line'>before trying to use a FUSE-based filesystem.
-</span><span class='line'>==&gt; Summary
-</span><span class='line'>/usr/local/Cellar/sshfs/2.3.0: 7 files, 120K, built in 12 seconds</span></code></pre></td></tr></table></div></figure>
-
-
-<p>installすると上のように言われるので指示に従う。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew info fuse4x-kext
-</span><span class='line'>fuse4x-kext 0.8.14
-</span><span class='line'>http://fuse4x.org/
-</span><span class='line'>/usr/local/Cellar/fuse4x-kext/0.8.14 (7 files, 312K)
-</span><span class='line'>
-</span><span class='line'>In order for FUSE-based filesystems to work, the fuse4x kernel extension
-</span><span class='line'>must be installed by the root user:
-</span><span class='line'>
-</span><span class='line'>  sudo cp -rfX /usr/local/Cellar/fuse4x-kext/0.8.14/Library/Extensions/fuse4x.kext /System/Library/Extensions
-</span><span class='line'>  sudo chmod +s /System/Library/Extensions/fuse4x.kext/Support/load_fuse4x
-</span><span class='line'>
-</span><span class='line'>If upgrading from a previous version of Fuse4x, the old kernel extension
-</span><span class='line'>will need to be unloaded before performing the steps listed above. First,
-</span><span class='line'>check that no FUSE-based filesystems are running:
-</span><span class='line'>
-</span><span class='line'>  mount | grep fuse4x
-</span><span class='line'>
-</span><span class='line'>Unmount all FUSE filesystems and then unload the kernel extension:
-</span><span class='line'>
-</span><span class='line'>  sudo kextunload -b org.fuse4x.kext.fuse4x
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>http://github.com/mxcl/homebrew/commits/master/Library/Formula/fuse4x-kext.rb</span></code></pre></td></tr></table></div></figure>
-
-
-<p>上のsudoコマンド2つを叩くだけで使えるようになる(下の方はアップグレードのときに実行するらしい)</p>
 </div>
-  
-  
 
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -1054,6 +465,7 @@ gem 'rails', github: 'rails/rails'
 
   
 </aside>
+
 
     </div>
   </div>

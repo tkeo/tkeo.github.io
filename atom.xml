@@ -4,7 +4,7 @@
   <title><![CDATA[blog.tkeo.info]]></title>
   <link href="http://tkeo.github.io/atom.xml" rel="self"/>
   <link href="http://tkeo.github.io/"/>
-  <updated>2014-12-09T03:26:05+09:00</updated>
+  <updated>2014-12-10T06:22:19+09:00</updated>
   <id>http://tkeo.github.io/</id>
   <author>
     <name><![CDATA[tkeo]]></name>
@@ -12,6 +12,319 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[EmacsでUnity開発をする]]></title>
+    <link href="http://tkeo.github.io/blog/2014/12/10/unity-with-emacs/"/>
+    <updated>2014-12-10T06:00:00+09:00</updated>
+    <id>http://tkeo.github.io/blog/2014/12/10/unity-with-emacs</id>
+    <content type="html"><![CDATA[<p>これは<a href="http://www.adventar.org/calendars/518">ドリコム Advent Calendar 2014</a>の10日目の記事です。</p>
+
+<p>9日目は<a href="https://twitter.com/y05_net">@hiracy</a>さんによる<a href="http://qiita.com/y05_net/items/c8bfb69ff624d4b711e4">サーバが増えた時にインフラ担当者がやってきたこと</a>です。</p>
+
+<h2>自己紹介</h2>
+
+<ul>
+<li><a href="https://twitter.com/tkeo">@tkeo</a></li>
+<li>2007年新卒でドリコムに入社、8年目</li>
+<li>メインの仕事はスマホゲームのサーバサイド(Rails)で、今年からクライアント(Unity)のほうも触り始めた</li>
+<li>Rails歴 6年、Unity歴 8ヶ月</li>
+<li>いまの作業比率は サーバ:クライアント = 2:1 ぐらい</li>
+</ul>
+
+
+<h2>今回の話</h2>
+
+<p>Unityを始めた当初はMonoDevelopを使っていたのですが、どうにも手になじまず腹が立ったので、普段サーバ側の開発で使っているemacsを使うことにしました。</p>
+
+<p>以下はいろいろハマりながらも、インターネット上の先人の力を借りてまとめた自分の設定です。</p>
+
+<h2>環境</h2>
+
+<ul>
+<li>Mac OS X Mavericks</li>
+<li>emacs 24.4.1</li>
+<li>パッケージ管理はcask</li>
+</ul>
+
+
+<h2><a href="https://github.com/josteink/csharp-mode">csharp-mode</a></h2>
+
+<p>これがなくては始まらないC#用のメジャーモード。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='lisp'><span class='line'><span class="c1">; cask</span>
+</span><span class='line'><span class="p">(</span><span class="nv">depends-on</span> <span class="s">&quot;csharp-mode&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='lisp'><span class='line'><span class="c1">; init.el</span>
+</span><span class='line'><span class="p">(</span><span class="nb">require</span> <span class="ss">&#39;csharp-mode</span><span class="p">)</span>
+</span><span class='line'><span class="p">(</span><span class="nv">add-hook</span> <span class="ss">&#39;csharp-mode-hook</span>
+</span><span class='line'>          <span class="o">&#39;</span><span class="p">(</span><span class="k">lambda</span> <span class="p">()</span>
+</span><span class='line'>             <span class="p">(</span><span class="k">setq</span> <span class="nv">indent-tabs-mode</span> <span class="no">nil</span><span class="p">)</span>
+</span><span class='line'>             <span class="p">(</span><span class="k">setq</span> <span class="nv">c-basic-offset</span> <span class="mi">4</span><span class="p">)</span>
+</span><span class='line'>             <span class="p">(</span><span class="nv">c-set-offset</span> <span class="ss">&#39;substatement-open</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>             <span class="p">(</span><span class="nv">flycheck-mode</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>             <span class="p">(</span><span class="nv">omnisharp-mode</span><span class="p">)))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>自動補完</h2>
+
+<h3><a href="https://github.com/OmniSharp/omnisharp-server">OmniSharpServer</a></h3>
+
+<p>C#のコードをパースしたりいろいろやってくれる（らしい）サーバです。
+他のエディタでも使えるらしいです。</p>
+
+<p>monoが必要なのでインストールして、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ brew install mono
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>あとはREADME通りにビルド。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ git clone https://github.com/nosami/OmniSharpServer.git
+</span><span class='line'>$ cd OmniSharpServer
+</span><span class='line'>$ git submodule update --init --recursive
+</span><span class='line'>$ xbuild
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>すると<code>OmniSharp/bin/Debug</code>に<code>OmniSharp.exe</code>ができているはず。
+試しに起動してみる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ mono OmniSharp/bin/Debug/OmniSharp.exe -s /path/to/unity-project.sln
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>するとずらずらっとLoadingほげほげと出てきて、<code>Solution has finished loading</code>で起動完了。無事起動が確認できたらCtrl+Cで止めておく（このあとemacsから起動するので）</p>
+
+<h3><a href="https://github.com/OmniSharp/omnisharp-emacs">omnisharp-emacs</a></h3>
+
+<p>OmniSharpServerをemacsから使うためのものです。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='lisp'><span class='line'><span class="c1">; cask</span>
+</span><span class='line'><span class="p">(</span><span class="nv">depends-on</span> <span class="s">&quot;omnisharp&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='lisp'><span class='line'><span class="c1">; init.el</span>
+</span><span class='line'><span class="p">(</span><span class="nb">require</span> <span class="ss">&#39;omnisharp</span><span class="p">)</span>
+</span><span class='line'><span class="p">(</span><span class="k">setq</span> <span class="nv">omnisharp-server-executable-path</span> <span class="p">(</span><span class="nv">expand-file-name</span> <span class="s">&quot;/path/to/OmniSharp/bin/Debug/OmniSharp.exe&quot;</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>csファイルを開いた時にslnファイルを選べと言われるので、選んであげるとバックグラウンドで起動してくれます。</p>
+
+<p><code>M-x omnisharp-auto-complete</code>で候補表示、<code>M-x omnisharp-go-to-definition</code>で定義にジャンプできます。
+適当なキーバインドを設定しておくと便利。</p>
+
+<h2>文法チェック</h2>
+
+<p><a href="http://www.flycheck.org/en/latest/">flycheck</a></p>
+
+<p>omnisharp-emacsにcheckerが含まれていて、OmniSharpサーバと連携してチェックをしてくれます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='lisp'><span class='line'><span class="c1">; cask</span>
+</span><span class='line'><span class="p">(</span><span class="nv">depends-on</span> <span class="s">&quot;flycheck&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='lisp'><span class='line'><span class="c1">; init.el</span>
+</span><span class='line'><span class="p">(</span><span class="nb">require</span> <span class="ss">&#39;flycheck</span><span class="p">)</span>
+</span><span class='line'><span class="p">(</span><span class="k">setq</span> <span class="nv">flycheck-check-syntax-automatically</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">mode-enabled</span> <span class="nv">save</span> <span class="nv">idle-change</span><span class="p">))</span>
+</span><span class='line'><span class="p">(</span><span class="k">setq</span> <span class="nv">flycheck-idle-change-delay</span> <span class="mi">2</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>emacsclientアプリ化</h2>
+
+<p>Unity上でcsファイルをダブルクリックして開きたくなったときのための設定（あまりしないけど）</p>
+
+<p>Unityの設定で外部エディタに指定できるのはMacのアプリ(*.app)だけなので、emacsclientを起動するアプリを作ります。
+<a href="https://gist.github.com/mkitt/824401">vim用にやっている人がいた</a>のでその設定を参考にしました。</p>
+
+<p>アプリを作るのにはAutomatorを使います。手順は以下のとおり。</p>
+
+<ol>
+<li>アプリケーションを選択。</li>
+<li>アクション＞ユーティリティの中にある「AppleScriptを実行」を右にドラッグ＆ドロップ。</li>
+<li>下記コードを貼り付けて、appを適当な場所に保存。</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='applescript'><span class='line'><span class="k">on</span> <span class="nb">run</span> <span class="p">{</span><span class="nv">input</span><span class="p">,</span> <span class="nv">parameters</span><span class="p">}</span>
+</span><span class='line'>    <span class="nb">do shell script</span> <span class="s2">&quot;/usr/local/bin/emacsclient -n &quot;</span> <span class="o">&amp;</span> <span class="nb">quoted form</span> <span class="k">of</span> <span class="nv">POSIX</span> <span class="na">path</span> <span class="k">of</span> <span class="nv">input</span>
+</span><span class='line'><span class="k">end</span> <span class="nb">run</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="http://tkeo.github.io/images/screenshot-2014-12-10-automator.png" alt="automator" /></p>
+
+<p>作ったappをUnity上で指定してあげると、外部エディタとしてemacsが使えるようになります。
+あとはserverとして起動するのを忘れずに。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='lisp'><span class='line'><span class="c1">; init.el</span>
+</span><span class='line'><span class="p">(</span><span class="nb">require</span> <span class="ss">&#39;server</span><span class="p">)</span>
+</span><span class='line'><span class="p">(</span><span class="nb">unless</span> <span class="p">(</span><span class="nv">server-running-p</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">(</span><span class="nv">server-start</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>リファレンス検索</h2>
+
+<p>rubyの開発でも使っている<a href="http://kapeli.com/dash">Dash</a>を使えるようにします。</p>
+
+<h3>dash-at-point</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='lisp'><span class='line'><span class="p">(</span><span class="nv">depends-on</span> <span class="s">&quot;dash-at-point&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='lisp'><span class='line'><span class="c1">; init.el</span>
+</span><span class='line'><span class="p">(</span><span class="nv">global-set-key</span> <span class="p">(</span><span class="nv">kbd</span> <span class="s">&quot;C-c d&quot;</span><span class="p">)</span> <span class="ss">&#39;dash-at-point</span><span class="p">)</span>
+</span><span class='line'><span class="p">(</span><span class="nv">global-set-key</span> <span class="p">(</span><span class="nv">kbd</span> <span class="s">&quot;C-c e&quot;</span><span class="p">)</span> <span class="ss">&#39;dash-at-point-with-docset</span><span class="p">)</span>
+</span><span class='line'><span class="p">(</span><span class="nv">add-to-list</span> <span class="ss">&#39;dash-at-point-mode-alist</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">csharp-mode</span> <span class="o">.</span> <span class="s">&quot;cs&quot;</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>カーソル位置の単語で検索します。
+上記設定ではcsharp-modeのときはキーワード &ldquo;cs&rdquo; が設定されたdocsetの中から検索します。</p>
+
+<p><img src="http://tkeo.github.io/images/screenshot-2014-12-10-dash.png" alt="dash" /></p>
+
+<p>Dash側で画像のようにキーワードを設定しておくと、.NET FrameworkとUnity 3Dのドキュメントを同時に検索できます。</p>
+
+<h3>自前docsetを作る</h3>
+
+<p>doxygenを使えばDash用のdocsetを作れます。
+コードを含むアセットを購入した時に（たまに）やってます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ brew install doxygen
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ cat doxygen.config
+</span><span class='line'>GENERATE_DOCSET        = YES
+</span><span class='line'>SEARCHENGINE           = NO
+</span><span class='line'>DISABLE_INDEX          = YES
+</span><span class='line'>GENERATE_TREEVIEW      = NO
+</span><span class='line'>GENERATE_LATEX         = NO
+</span><span class='line'>GENERATE_HTMLHELP      = YES
+</span><span class='line'>RECURSIVE              = YES
+</span><span class='line'>
+</span><span class='line'>PROJECT_NAME           = hogehoge
+</span><span class='line'>OUTPUT_DIRECTORY       = output
+</span><span class='line'>INPUT                  = path/to/Scripts
+</span><span class='line'>DOCSET_BUNDLE_ID       = hogehoge
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じの設定ファイルを作って、まずはHTMLドキュメントを生成。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ doxygen doxygen.config
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>htmlディレクトリに移動してmakeをたたくとdocsetが作られます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ cd output/html
+</span><span class='line'>$ make
+</span><span class='line'>$ open hogehoge.docset
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>その他</h2>
+
+<p>日本語を含むときはBOM付きで保存しないと化けます。<code>C-x RET f</code>で<code>utf-8-with-signature</code>に変更。</p>
+
+<h2>まとめ</h2>
+
+<p>以上、MonoDevelopを使わずにemacsでUnity開発するための設定を紹介しました。</p>
+
+<p>明日はみっきーさんです。</p>
+
+<h2>参考リンク</h2>
+
+<ul>
+<li><a href="http://qiita.com/fujimisakari/items/d043a2fae31ed740e290">EmacsでUnity開発(c#)するための環境構築 - Qiita</a></li>
+<li><a href="http://bocchies.hatenablog.com/entry/2014/05/09/041130">Emacs24.3(for Mac OSX)でUnity用のC#を書くために - とあるぼっちの生存報告</a></li>
+<li><a href="http://decomo.info/wiki/emacs/emacs_24.3_csharp_code_completion_with_omnisharp">Emacs 24.3 + omnisharp-emacsで快適C#生活 [クソゲ〜製作所]</a></li>
+<li><a href="https://gist.github.com/mkitt/824401">AppleScript for use with Automator which allows opening files within Terminal Vim</a></li>
+<li><a href="http://d.hatena.ne.jp/nakamura001/20121208/1354985761">NGUI のプログラムを元にオフラインでも使えるAPIリファレンスを作る方法 - 強火で進め</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[ブログ引っ越し]]></title>
