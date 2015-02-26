@@ -1,0 +1,21 @@
+---
+layout: post
+title: "UTF-16なファイルのgit diffを見たい"
+date: 2015-02-26 22:36:45 +0900
+categories: 
+---
+gitがUTF-16のファイルをバイナリだと認識してしまって、diffが表示されずに困ったので以下の設定をした。
+
+```
+$ git config diff.toutf8.textconv 'nkf -w8'
+```
+
+.gitattributesファイルに以下の一行を書く。
+
+```
+*.cs diff=toutf8
+```
+
+これでcsファイルをUTF-8に変換してからdiffを取るようになった。
+
+ググるとiconvを使うのが見つかるけど、UnityアセットのソースコードがUTF-8のものとUTF-16のものが混在しているので、入力をよしなに判別してくれるnkfを使うようにした。
