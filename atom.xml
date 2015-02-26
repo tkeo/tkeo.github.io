@@ -4,7 +4,7 @@
   <title><![CDATA[blog.tkeo.info]]></title>
   <link href="http://blog.tkeo.info/atom.xml" rel="self"/>
   <link href="http://blog.tkeo.info/"/>
-  <updated>2014-12-22T01:19:34+09:00</updated>
+  <updated>2015-02-26T23:12:32+09:00</updated>
   <id>http://blog.tkeo.info/</id>
   <author>
     <name><![CDATA[tkeo]]></name>
@@ -12,6 +12,29 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[UTF-16なファイルのgit diffを見たい]]></title>
+    <link href="http://blog.tkeo.info/blog/2015/02/26/git-diff-utf-16/"/>
+    <updated>2015-02-26T22:36:45+09:00</updated>
+    <id>http://blog.tkeo.info/blog/2015/02/26/git-diff-utf-16</id>
+    <content type="html"><![CDATA[<p>gitがUTF-16のファイルをバイナリだと認識してしまって、diffが表示されずに困ったので以下の設定をした。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git config diff.toutf8.textconv 'nkf -w8'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>.gitattributesファイルに以下の一行を書く。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*.cs diff=toutf8</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでcsファイルをUTF-8に変換してからdiffを取るようになった。</p>
+
+<p>ググるとiconvを使うのが見つかるけど、UnityアセットのソースコードがUTF-8のものとUTF-16のものが混在しているので、入力をよしなに判別してくれるnkfを使うようにした。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[社内LT大会で家電ChatOpsについて話した]]></title>
@@ -757,7 +780,7 @@ gem 'rails', github: 'rails/rails'
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Macでsshfsを使う]]></title>
+    <title type="html"><![CDATA[macでsshfsを使う]]></title>
     <link href="http://blog.tkeo.info/blog/2012/05/09/mac-sshfs/"/>
     <updated>2012-05-09T02:12:41+09:00</updated>
     <id>http://blog.tkeo.info/blog/2012/05/09/mac-sshfs</id>

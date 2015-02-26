@@ -9,9 +9,9 @@
   <meta name="author" content="tkeo">
 
   
-  <meta name="description" content=" IRKitを使って、ChatOpsやってみたよっていう話を先週の社内LT大会で話しました。
-ChatOpsしたい、rubotyとhubot使いたいっていうのが目的なので、わざとまわりくどいことをやってます。
-">
+  <meta name="description" content="gitがUTF-16のファイルをバイナリだと認識してしまって、diffが表示されずに困ったので以下の設定をした。 1
+$ git config diff.toutf8.textconv 'nkf -w8' .gitattributesファイルに以下の一行を書く。 1
+*.cs diff= &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,49 @@ ChatOpsしたい、rubotyとhubot使いたいっていうのが目的なので�
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/02/26/git-diff-utf-16/">UTF-16なファイルのgit diffを見たい</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-02-26T22:36:45+09:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:36 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>gitがUTF-16のファイルをバイナリだと認識してしまって、diffが表示されずに困ったので以下の設定をした。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git config diff.toutf8.textconv 'nkf -w8'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>.gitattributesファイルに以下の一行を書く。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*.cs diff=toutf8</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでcsファイルをUTF-8に変換してからdiffを取るようになった。</p>
+
+<p>ググるとiconvを使うのが見つかるけど、UnityアセットのソースコードがUTF-8のものとUTF-16のものが混在しているので、入力をよしなに判別してくれるnkfを使うようにした。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -954,7 +997,7 @@ gem 'rails', github: 'rails/rails'
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2012/05/09/mac-sshfs/">Macでsshfsを使う</a></h1>
+      <h1 class="entry-title"><a href="/blog/2012/05/09/mac-sshfs/">macでsshfsを使う</a></h1>
     
     
       <p class="meta">
@@ -1059,6 +1102,10 @@ gem 'rails', github: 'rails/rails'
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/02/26/git-diff-utf-16/">UTF-16なファイルのgit diffを見たい</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/12/22/kaden-chatops/">社内LT大会で家電ChatOpsについて話した</a>
       </li>
     
@@ -1074,10 +1121,6 @@ gem 'rails', github: 'rails/rails'
         <a href="/blog/2013/02/05/diary/">日記</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/01/17/rails4-minitest-spork-guard/">Rails4 で MiniTest + Spork + Guard</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -1091,7 +1134,7 @@ gem 'rails', github: 'rails/rails'
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - tkeo -
+  Copyright &copy; 2015 - tkeo -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

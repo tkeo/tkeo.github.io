@@ -5,18 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>ブログ引っ越し - blog.tkeo.info</title>
+  <title>UTF-16なファイルのgit diffを見たい - blog.tkeo.info</title>
   <meta name="author" content="tkeo">
 
   
-  <meta name="description" content="hatenablogから引っ越してきた。
-octopressお手軽でいい感じ。 zshだとrake new_postのときにglob展開しようとして怒られるので、noglobをつける。 1
-2
-3
-4
-5
-$ rake new_post['hoge']
-zsh: no matches found &hellip;">
+  <meta name="description" content="gitがUTF-16のファイルをバイナリだと認識してしまって、diffが表示されずに困ったので以下の設定をした。 1
+$ git config diff.toutf8.textconv 'nkf -w8' .gitattributesファイルに以下の一行を書く。 1
+*.cs diff= &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -25,7 +20,7 @@ zsh: no matches found &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.tkeo.info/blog/2014/12/09/moved">
+  <link rel="canonical" href="http://blog.tkeo.info/blog/2015/02/26/git-diff-utf-16">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="blog.tkeo.info" type="application/atom+xml">
@@ -73,7 +68,7 @@ zsh: no matches found &hellip;">
   
   <header>
     
-      <h1 class="entry-title">ブログ引っ越し</h1>
+      <h1 class="entry-title">UTF-16なファイルのgit diffを見たい</h1>
     
     
       <p class="meta">
@@ -82,35 +77,28 @@ zsh: no matches found &hellip;">
 
 
 
-<time class='entry-date' datetime='2014-12-09T02:38:53+09:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>2:38 am</span></time>
+<time class='entry-date' datetime='2015-02-26T22:36:45+09:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:36 pm</span></time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>hatenablogから引っ越してきた。
-octopressお手軽でいい感じ。</p>
-
-<p>zshだと<code>rake new_post</code>のときにglob展開しようとして怒られるので、noglobをつける。</p>
+<div class="entry-content"><p>gitがUTF-16のファイルをバイナリだと認識してしまって、diffが表示されずに困ったので以下の設定をした。</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ rake new_post['hoge']
-</span><span class='line'>zsh: no matches found: new_post[hoge]
-</span><span class='line'>$ noglob rake new_post['hoge']
-</span><span class='line'>mkdir -p source/_posts
-</span><span class='line'>Creating new post: source/_posts/2014-12-09-hoge.markdown</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git config diff.toutf8.textconv 'nkf -w8'</span></code></pre></td></tr></table></div></figure>
 
 
-<p>面倒なのでaliasを書いてしまった。</p>
+<p>.gitattributesファイルに以下の一行を書く。</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>alias rake='noglob rake'</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*.cs diff=toutf8</span></code></pre></td></tr></table></div></figure>
 
+
+<p>これでcsファイルをUTF-8に変換してからdiffを取るようになった。</p>
+
+<p>ググるとiconvを使うのが見つかるけど、UnityアセットのソースコードがUTF-8のものとUTF-16のものが混在しているので、入力をよしなに判別してくれるnkfを使うようにした。</p>
 </div>
 
 
@@ -126,7 +114,7 @@ octopressお手軽でいい感じ。</p>
 
 
 
-<time class='entry-date' datetime='2014-12-09T02:38:53+09:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>2:38 am</span></time>
+<time class='entry-date' datetime='2015-02-26T22:36:45+09:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:36 pm</span></time>
       
 
 
@@ -134,7 +122,7 @@ octopressお手軽でいい感じ。</p>
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://blog.tkeo.info/blog/2014/12/09/moved/" data-via="" data-counturl="http://blog.tkeo.info/blog/2014/12/09/moved/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://blog.tkeo.info/blog/2015/02/26/git-diff-utf-16/" data-via="" data-counturl="http://blog.tkeo.info/blog/2015/02/26/git-diff-utf-16/" >Tweet</a>
   
   
   
@@ -143,10 +131,8 @@ octopressお手軽でいい感じ。</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/02/05/diary/" title="Previous Post: 日記">&laquo; 日記</a>
+        <a class="basic-alignment left" href="/blog/2014/12/22/kaden-chatops/" title="Previous Post: 社内LT大会で家電ChatOpsについて話した">&laquo; 社内LT大会で家電ChatOpsについて話した</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/12/10/unity-with-emacs/" title="Next Post: EmacsでUnity開発をする">EmacsでUnity開発をする &raquo;</a>
       
     </p>
   </footer>
