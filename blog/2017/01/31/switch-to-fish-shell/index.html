@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>fish shellに移行した - blog.tkeo.info</title>
+  <meta name="author" content="tkeo">
+
+  
+  <meta name="description" content="学生の頃にzshを使い始めてかれこれ10年以上になるが、2ヶ月ほど前にfishに移行した。
+ようやく慣れてきたのでメモを残しておく。 使用しているfishのバージョンは2.4.0で、プラグインなどは入れてない。
+oh-my-fishを使うと便利っぽいけど、 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.tkeo.info/blog/2017/01/31/switch-to-fish-shell">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="blog.tkeo.info" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">blog.tkeo.info</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.tkeo.info" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">fish shellに移行した</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-01-31T00:15:30+09:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2017</span></span> <span class='time'>12:15 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>学生の頃にzshを使い始めてかれこれ10年以上になるが、2ヶ月ほど前にfishに移行した。
+ようやく慣れてきたのでメモを残しておく。</p>
+
+<p>使用しているfishのバージョンは2.4.0で、プラグインなどは入れてない。
+<a href="https://github.com/oh-my-fish/oh-my-fish">oh-my-fish</a>を使うと便利っぽいけど、困ったときに入れたらいいかなと思ってまだ困ってないので使ってない。</p>
+
+<h2>config</h2>
+
+<p>とりあえず<code>~/.zshrc</code>をベースに<code>~/.config/fish/config.fish</code>を作った。
+<code>alias</code>とか<code>export</code>とかは大体そのままコピペで動くが、なぜかPATHのexportだけはうまくいかなかったので<code>set</code>を使うように変更した。</p>
+
+<p>他は<code>if</code>を<code>end</code>で閉じるとか、<code>&amp;&amp;</code>のかわりに<code>; and</code>を使うとか、<code>$( )</code>は<code>( )</code>にするとか、気をつけないといけないポイントはいくつかあるけどそのへんは適当に。</p>
+
+<h2>補完</h2>
+
+<p>サーバーにログインするときはsshrcを使っていて、sshコマンドと同じようにタブでホスト名を補完してほしい。そういうときの設定は以下。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>complete -c sshrc -w ssh</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="https://fishshell.com/docs/current/commands.html#complete">complete - edit command specific tab-completions</a></p>
+
+<h2>一時的な環境変数</h2>
+
+<p>例えばzshの場合だとこんな感じのコマンドを実行することがあるけど</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>RAILS_ENV=test rake db:reset</span></code></pre></td></tr></table></div></figure>
+
+
+<p>fishだとこれではダメで、<code>env</code>をつける必要がある。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>env RAILS_ENV=test rake db:reset</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="https://fishshell.com/docs/current/faq.html#faq-single-env">How do I set an environment variable for just one command?</a></p>
+
+<h2>ブレース展開</h2>
+
+<p><code>{ }</code>の中身が展開されるため、展開を抑制したいときはエスケープが必要。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git stash drop stash@\{1\}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とか、</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rails g model foo bar:references\{polymorphic\}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とか。ちょっと面倒。gitの引数の場合はタブ補完でバックスラッシュをちゃんとつけてくれる。</p>
+
+<h2>プロセス置換</h2>
+
+<p>コマンド実行結果をファイルのように扱うやつ。zshだとこんな感じ。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>diff &lt;(foo) &lt;(bar)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>fishの場合は<code>psub</code>を使う。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>diff (foo | psub) (bar | psub)</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="https://fishshell.com/docs/current/commands.html#psub">psub - perform process substitution</a></p>
+
+<h2>履歴</h2>
+
+<p>zshのshare_history相当のものが無いため最初は戸惑ったが、普段使っているコマンドのパターンはそれほど多くなかったので履歴が育てば不要だった。</p>
+
+<p>それでもtmuxの別のwindow/paneで少し前に打ったコマンドがほしくなることはたまにあって、そういうときは<code>history merge</code>を実行して履歴を再読込している。</p>
+
+<p>自動でmergeするのを試してみたけどコマンド実行のたびに微妙に待たされてストレスたまるので手動運用のほうがよいと思う。</p>
+
+<p><a href="https://fishshell.com/docs/current/commands.html#history">history - Show and manipulate command history</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">tkeo</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2017-01-31T00:15:30+09:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2017</span></span> <span class='time'>12:15 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/fish/'>fish</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://blog.tkeo.info/blog/2017/01/31/switch-to-fish-shell/" data-via="" data-counturl="http://blog.tkeo.info/blog/2017/01/31/switch-to-fish-shell/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/02/26/git-diff-utf-16/" title="Previous Post: UTF-16なファイルのgit diffを見たい">&laquo; UTF-16なファイルのgit diffを見たい</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/01/31/switch-to-fish-shell/">fish shellに移行した</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/26/git-diff-utf-16/">UTF-16なファイルのgit diffを見たい</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/22/kaden-chatops/">社内LT大会で家電ChatOpsについて話した</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/10/unity-with-emacs/">EmacsでUnity開発をする</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/09/moved/">ブログ引っ越し</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2017 - tkeo -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

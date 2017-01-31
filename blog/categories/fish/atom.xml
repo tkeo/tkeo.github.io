@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: fish | blog.tkeo.info]]></title>
+  <link href="http://blog.tkeo.info/blog/categories/fish/atom.xml" rel="self"/>
+  <link href="http://blog.tkeo.info/"/>
+  <updated>2017-02-01T00:32:54+09:00</updated>
+  <id>http://blog.tkeo.info/</id>
+  <author>
+    <name><![CDATA[tkeo]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[fish shellに移行した]]></title>
+    <link href="http://blog.tkeo.info/blog/2017/01/31/switch-to-fish-shell/"/>
+    <updated>2017-01-31T00:15:30+09:00</updated>
+    <id>http://blog.tkeo.info/blog/2017/01/31/switch-to-fish-shell</id>
+    <content type="html"><![CDATA[<p>学生の頃にzshを使い始めてかれこれ10年以上になるが、2ヶ月ほど前にfishに移行した。
+ようやく慣れてきたのでメモを残しておく。</p>
+
+<p>使用しているfishのバージョンは2.4.0で、プラグインなどは入れてない。
+<a href="https://github.com/oh-my-fish/oh-my-fish">oh-my-fish</a>を使うと便利っぽいけど、困ったときに入れたらいいかなと思ってまだ困ってないので使ってない。</p>
+
+<h2>config</h2>
+
+<p>とりあえず<code>~/.zshrc</code>をベースに<code>~/.config/fish/config.fish</code>を作った。
+<code>alias</code>とか<code>export</code>とかは大体そのままコピペで動くが、なぜかPATHのexportだけはうまくいかなかったので<code>set</code>を使うように変更した。</p>
+
+<p>他は<code>if</code>を<code>end</code>で閉じるとか、<code>&amp;&amp;</code>のかわりに<code>; and</code>を使うとか、<code>$( )</code>は<code>( )</code>にするとか、気をつけないといけないポイントはいくつかあるけどそのへんは適当に。</p>
+
+<h2>補完</h2>
+
+<p>サーバーにログインするときはsshrcを使っていて、sshコマンドと同じようにタブでホスト名を補完してほしい。そういうときの設定は以下。</p>
+
+<pre><code>complete -c sshrc -w ssh
+</code></pre>
+
+<p><a href="https://fishshell.com/docs/current/commands.html#complete">complete - edit command specific tab-completions</a></p>
+
+<h2>一時的な環境変数</h2>
+
+<p>例えばzshの場合だとこんな感じのコマンドを実行することがあるけど</p>
+
+<pre><code>RAILS_ENV=test rake db:reset
+</code></pre>
+
+<p>fishだとこれではダメで、<code>env</code>をつける必要がある。</p>
+
+<pre><code>env RAILS_ENV=test rake db:reset
+</code></pre>
+
+<p><a href="https://fishshell.com/docs/current/faq.html#faq-single-env">How do I set an environment variable for just one command?</a></p>
+
+<h2>ブレース展開</h2>
+
+<p><code>{ }</code>の中身が展開されるため、展開を抑制したいときはエスケープが必要。</p>
+
+<pre><code>git stash drop stash@\{1\}
+</code></pre>
+
+<p>とか、</p>
+
+<pre><code>rails g model foo bar:references\{polymorphic\}
+</code></pre>
+
+<p>とか。ちょっと面倒。gitの引数の場合はタブ補完でバックスラッシュをちゃんとつけてくれる。</p>
+
+<h2>プロセス置換</h2>
+
+<p>コマンド実行結果をファイルのように扱うやつ。zshだとこんな感じ。</p>
+
+<pre><code>diff &lt;(foo) &lt;(bar)
+</code></pre>
+
+<p>fishの場合は<code>psub</code>を使う。</p>
+
+<pre><code>diff (foo | psub) (bar | psub)
+</code></pre>
+
+<p><a href="https://fishshell.com/docs/current/commands.html#psub">psub - perform process substitution</a></p>
+
+<h2>履歴</h2>
+
+<p>zshのshare_history相当のものが無いため最初は戸惑ったが、普段使っているコマンドのパターンはそれほど多くなかったので履歴が育てば不要だった。</p>
+
+<p>それでもtmuxの別のwindow/paneで少し前に打ったコマンドがほしくなることはたまにあって、そういうときは<code>history merge</code>を実行して履歴を再読込している。</p>
+
+<p>自動でmergeするのを試してみたけどコマンド実行のたびに微妙に待たされてストレスたまるので手動運用のほうがよいと思う。</p>
+
+<p><a href="https://fishshell.com/docs/current/commands.html#history">history - Show and manipulate command history</a></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -5,13 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>UTF-16なファイルのgit diffを見たい - blog.tkeo.info</title>
+  <title>Category: fish - blog.tkeo.info</title>
   <meta name="author" content="tkeo">
 
   
-  <meta name="description" content="gitがUTF-16のファイルをバイナリだと認識してしまって、diffが表示されずに困ったので以下の設定をした。 1
-$ git config diff.toutf8.textconv 'nkf -w8' .gitattributesファイルに以下の一行を書く。 1
-*.cs diff= &hellip;">
+  <meta name="description" content="Category: fish">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +18,7 @@ $ git config diff.toutf8.textconv 'nkf -w8' .gitattributesファイルに以下�
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.tkeo.info/blog/2015/02/26/git-diff-utf-16">
+  <link rel="canonical" href="http://blog.tkeo.info/blog/categories/fish">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="blog.tkeo.info" type="application/atom+xml">
@@ -64,80 +62,35 @@ $ git config diff.toutf8.textconv 'nkf -w8' .gitattributesファイルに以下�
   <div id="main">
     <div id="content">
       <div>
-<article class="hentry" role="article">
+<article role="article">
   
   <header>
-    
-      <h1 class="entry-title">UTF-16なファイルのgit diffを見たい</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-02-26T22:36:45+09:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:36 pm</span></time>
-        
-      </p>
+    <h1 class="entry-title">Category: fish</h1>
     
   </header>
+  
+  <div id="blog-archives" class="category">
 
 
-<div class="entry-content"><p>gitがUTF-16のファイルをバイナリだと認識してしまって、diffが表示されずに困ったので以下の設定をした。</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git config diff.toutf8.textconv 'nkf -w8'</span></code></pre></td></tr></table></div></figure>
+  
+  <h2>2017</h2>
+
+<article>
+  
+<h1><a href="/blog/2017/01/31/switch-to-fish-shell/">fish shellに移行した</a></h1>
+<time datetime="2017-01-31T00:15:30+09:00" pubdate><span class='month'>Jan</span> <span class='day'>31</span> <span class='year'>2017</span></time>
+
+<footer>
+  <span class="categories">posted in <a class='category' href='/blog/categories/fish/'>fish</a></span>
+</footer>
 
 
-<p>.gitattributesファイルに以下の一行を書く。</p>
+</article>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>*.cs diff=toutf8</span></code></pre></td></tr></table></div></figure>
-
-
-<p>これでcsファイルをUTF-8に変換してからdiffを取るようになった。</p>
-
-<p>ググるとiconvを使うのが見つかるけど、UnityアセットのソースコードがUTF-8のものとUTF-16のものが混在しているので、入力をよしなに判別してくれるnkfを使うようにした。</p>
 </div>
 
-
-  <footer>
-    <p class="meta">
-      
   
-
-<span class="byline author vcard">Posted by <span class="fn">tkeo</span></span>
-
-      
-
-
-
-
-<time class='entry-date' datetime='2015-02-26T22:36:45+09:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:36 pm</span></time>
-      
-
-
-    </p>
-    
-      <div class="sharing">
-  
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://blog.tkeo.info/blog/2015/02/26/git-diff-utf-16/" data-via="" data-counturl="http://blog.tkeo.info/blog/2015/02/26/git-diff-utf-16/" >Tweet</a>
-  
-  
-  
-</div>
-
-    
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/blog/2014/12/22/kaden-chatops/" title="Previous Post: 社内LT大会で家電ChatOpsについて話した">&laquo; 社内LT大会で家電ChatOpsについて話した</a>
-      
-      
-        <a class="basic-alignment right" href="/blog/2017/01/31/switch-to-fish-shell/" title="Next Post: fish shellに移行した">fish shellに移行した &raquo;</a>
-      
-    </p>
-  </footer>
 </article>
 
 </div>
