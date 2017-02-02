@@ -9,9 +9,13 @@
   <meta name="author" content="tkeo">
 
   
-  <meta name="description" content="学生の頃にzshを使い始めてかれこれ10年以上になるが、2ヶ月ほど前にfishに移行した。
-ようやく慣れてきたのでメモを残しておく。 使用しているfishのバージョンは2.4.0で、プラグインなどは入れてない。
-oh-my-fishを使うと便利っぽいけど、 &hellip;">
+  <meta name="description" content="雑なメモ。
+会社からでも更新できるように環境を作った。 とりあえずcloneしてsourceブランチに切り替える。 1
+2
+3
+git clone git@github.com:tkeo/tkeo.github.io.git blog
+cd blog
+git co -t origin/source &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +69,62 @@ oh-my-fishを使うと便利っぽいけど、 &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2017/02/02/octopress-setup-again/">Octopressデプロイ環境を作り直した</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-02-02T21:44:43+09:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2017</span></span> <span class='time'>9:44 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>雑なメモ。
+会社からでも更新できるように環境を作った。</p>
+
+<p>とりあえずcloneしてsourceブランチに切り替える。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git clone git@github.com:tkeo/tkeo.github.io.git blog
+</span><span class='line'>cd blog
+</span><span class='line'>git co -t origin/source</span></code></pre></td></tr></table></div></figure>
+
+
+<p>もろもろ必要なgemをinstallする。bundle execとか付けたくないので雑にgemsetに突っ込む。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rbenv gemset init blog
+</span><span class='line'>bundle</span></code></pre></td></tr></table></div></figure>
+
+
+<p>デプロイするには_deployディレクトリにmasterブランチが必要なのでworktreeを作る。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git worktree add _deploy master</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでOK。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1100,104 +1160,9 @@ gem 'rails', github: 'rails/rails'
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/09/mac-sshfs/">macでsshfsを使う</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2012-05-09T02:12:41+09:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>2:12 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>なんかぐぐるとMacFUSEを入れる方法ばっかり出てくるけど、brewで入れるのであれば不要。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install sshfs
-</span><span class='line'>(略)
-</span><span class='line'>==&gt; Caveats
-</span><span class='line'>Make sure to follow the directions given by `brew info fuse4x-kext`
-</span><span class='line'>before trying to use a FUSE-based filesystem.
-</span><span class='line'>==&gt; Summary
-</span><span class='line'>/usr/local/Cellar/sshfs/2.3.0: 7 files, 120K, built in 12 seconds</span></code></pre></td></tr></table></div></figure>
-
-
-<p>installすると上のように言われるので指示に従う。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew info fuse4x-kext
-</span><span class='line'>fuse4x-kext 0.8.14
-</span><span class='line'>http://fuse4x.org/
-</span><span class='line'>/usr/local/Cellar/fuse4x-kext/0.8.14 (7 files, 312K)
-</span><span class='line'>
-</span><span class='line'>In order for FUSE-based filesystems to work, the fuse4x kernel extension
-</span><span class='line'>must be installed by the root user:
-</span><span class='line'>
-</span><span class='line'>  sudo cp -rfX /usr/local/Cellar/fuse4x-kext/0.8.14/Library/Extensions/fuse4x.kext /System/Library/Extensions
-</span><span class='line'>  sudo chmod +s /System/Library/Extensions/fuse4x.kext/Support/load_fuse4x
-</span><span class='line'>
-</span><span class='line'>If upgrading from a previous version of Fuse4x, the old kernel extension
-</span><span class='line'>will need to be unloaded before performing the steps listed above. First,
-</span><span class='line'>check that no FUSE-based filesystems are running:
-</span><span class='line'>
-</span><span class='line'>  mount | grep fuse4x
-</span><span class='line'>
-</span><span class='line'>Unmount all FUSE filesystems and then unload the kernel extension:
-</span><span class='line'>
-</span><span class='line'>  sudo kextunload -b org.fuse4x.kext.fuse4x
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>http://github.com/mxcl/homebrew/commits/master/Library/Formula/fuse4x-kext.rb</span></code></pre></td></tr></table></div></figure>
-
-
-<p>上のsudoコマンド2つを叩くだけで使えるようになる(下の方はアップグレードのときに実行するらしい)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/posts/2">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -1208,6 +1173,10 @@ gem 'rails', github: 'rails/rails'
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/02/02/octopress-setup-again/">Octopressデプロイ環境を作り直した</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2017/01/31/switch-to-fish-shell/">fish shellに移行した</a>
@@ -1223,10 +1192,6 @@ gem 'rails', github: 'rails/rails'
     
       <li class="post">
         <a href="/blog/2014/12/10/unity-with-emacs/">EmacsでUnity開発をする</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/12/09/moved/">ブログ引っ越し</a>
       </li>
     
   </ul>

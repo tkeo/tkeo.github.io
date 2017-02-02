@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: octopress | blog.tkeo.info]]></title>
+  <link href="http://blog.tkeo.info/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://blog.tkeo.info/"/>
+  <updated>2017-02-02T22:19:03+09:00</updated>
+  <id>http://blog.tkeo.info/</id>
+  <author>
+    <name><![CDATA[tkeo]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Octopressデプロイ環境を作り直した]]></title>
+    <link href="http://blog.tkeo.info/blog/2017/02/02/octopress-setup-again/"/>
+    <updated>2017-02-02T21:44:43+09:00</updated>
+    <id>http://blog.tkeo.info/blog/2017/02/02/octopress-setup-again</id>
+    <content type="html"><![CDATA[<p>雑なメモ。
+会社からでも更新できるように環境を作った。</p>
+
+<p>とりあえずcloneしてsourceブランチに切り替える。</p>
+
+<pre><code>git clone git@github.com:tkeo/tkeo.github.io.git blog
+cd blog
+git co -t origin/source
+</code></pre>
+
+<p>もろもろ必要なgemをinstallする。bundle execとか付けたくないので雑にgemsetに突っ込む。</p>
+
+<pre><code>rbenv gemset init blog
+bundle
+</code></pre>
+
+<p>デプロイするには_deployディレクトリにmasterブランチが必要なのでworktreeを作る。</p>
+
+<pre><code>git worktree add _deploy master
+</code></pre>
+
+<p>これでOK。</p>
+]]></content>
+  </entry>
+  
+</feed>
