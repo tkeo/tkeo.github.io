@@ -9,17 +9,11 @@
   <meta name="author" content="tkeo">
 
   
-  <meta name="description" content="なんかぐぐるとMacFUSEを入れる方法ばっかり出てくるけど、brewで入れるのであれば不要。 1
+  <meta name="description" content="SHLVLっていう環境変数があることを知ったので、.zshrcに以下を追記してログイン直後にtmuxを起動するようにしてみた。 1
 2
 3
-4
-5
-6
-7
-$ brew install sshfs
-(略)
-==&gt; Caveats
-Make sure to follow the directions given by ` &hellip;">
+if [ $SHLVL = 1 ]; then tmux attach || tmux new
+fi ">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -73,6 +67,43 @@ Make sure to follow the directions given by ` &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/15/login-tmux/">ログイン直後にtmuxを起動する</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2012-11-15T14:15:22+09:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>2:15 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>SHLVLっていう環境変数があることを知ったので、.zshrcに以下を追記してログイン直後にtmuxを起動するようにしてみた。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>if [ $SHLVL = 1 ]; then
+</span><span class='line'>  tmux attach || tmux new
+</span><span class='line'>fi</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -190,6 +221,10 @@ Make sure to follow the directions given by ` &hellip;">
       </li>
     
       <li class="post">
+        <a href="/blog/2017/02/02/octopress-setup-again/">Octopressデプロイ環境を作り直した</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/01/31/switch-to-fish-shell/">fish shellに移行した</a>
       </li>
     
@@ -199,10 +234,6 @@ Make sure to follow the directions given by ` &hellip;">
     
       <li class="post">
         <a href="/blog/2014/12/22/kaden-chatops/">社内LT大会で家電ChatOpsについて話した</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/12/10/unity-with-emacs/">EmacsでUnity開発をする</a>
       </li>
     
   </ul>

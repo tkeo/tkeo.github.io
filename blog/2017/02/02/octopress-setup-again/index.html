@@ -5,15 +5,17 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>ログイン直後にtmuxを起動する - blog.tkeo.info</title>
+  <title>Octopressデプロイ環境を作り直した - blog.tkeo.info</title>
   <meta name="author" content="tkeo">
 
   
-  <meta name="description" content="SHLVLっていう環境変数があることを知ったので、.zshrcに以下を追記してログイン直後にtmuxを起動するようにしてみた。 1
+  <meta name="description" content="雑なメモ。
+会社からでも更新できるように環境を作った。 とりあえずcloneしてsourceブランチに切り替える。 1
 2
 3
-if [ $SHLVL = 1 ]; then tmux attach || tmux new
-fi ">
+git clone git@github.com:tkeo/tkeo.github.io.git blog
+cd blog
+git co -t origin/source &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -22,7 +24,7 @@ fi ">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.tkeo.info/blog/2012/11/15/login-tmux">
+  <link rel="canonical" href="http://blog.tkeo.info/blog/2017/02/02/octopress-setup-again">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="blog.tkeo.info" type="application/atom+xml">
@@ -70,7 +72,7 @@ fi ">
   
   <header>
     
-      <h1 class="entry-title">ログイン直後にtmuxを起動する</h1>
+      <h1 class="entry-title">Octopressデプロイ環境を作り直した</h1>
     
     
       <p class="meta">
@@ -79,22 +81,41 @@ fi ">
 
 
 
-<time class='entry-date' datetime='2012-11-15T14:15:22+09:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>2:15 pm</span></time>
+<time class='entry-date' datetime='2017-02-02T21:44:43+09:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2017</span></span> <span class='time'>9:44 pm</span></time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>SHLVLっていう環境変数があることを知ったので、.zshrcに以下を追記してログイン直後にtmuxを起動するようにしてみた。</p>
+<div class="entry-content"><p>雑なメモ。
+会社からでも更新できるように環境を作った。</p>
+
+<p>とりあえずcloneしてsourceブランチに切り替える。</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>if [ $SHLVL = 1 ]; then
-</span><span class='line'>  tmux attach || tmux new
-</span><span class='line'>fi</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git clone git@github.com:tkeo/tkeo.github.io.git blog
+</span><span class='line'>cd blog
+</span><span class='line'>git co -t origin/source</span></code></pre></td></tr></table></div></figure>
 
+
+<p>もろもろ必要なgemをinstallする。bundle execとか付けたくないので雑にgemsetに突っ込む。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rbenv gemset init blog
+</span><span class='line'>bundle</span></code></pre></td></tr></table></div></figure>
+
+
+<p>デプロイするには_deployディレクトリにmasterブランチが必要なのでworktreeを作る。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git worktree add _deploy master</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでOK。</p>
 </div>
 
 
@@ -110,15 +131,21 @@ fi ">
 
 
 
-<time class='entry-date' datetime='2012-11-15T14:15:22+09:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>2:15 pm</span></time>
+<time class='entry-date' datetime='2017-02-02T21:44:43+09:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2017</span></span> <span class='time'>9:44 pm</span></time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/octopress/'>octopress</a>
+  
+</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://blog.tkeo.info/blog/2012/11/15/login-tmux/" data-via="" data-counturl="http://blog.tkeo.info/blog/2012/11/15/login-tmux/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://blog.tkeo.info/blog/2017/02/02/octopress-setup-again/" data-via="" data-counturl="http://blog.tkeo.info/blog/2017/02/02/octopress-setup-again/" >Tweet</a>
   
   
   
@@ -127,10 +154,10 @@ fi ">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/05/09/mac-sshfs/" title="Previous Post: macでsshfsを使う">&laquo; macでsshfsを使う</a>
+        <a class="basic-alignment left" href="/blog/2017/01/31/switch-to-fish-shell/" title="Previous Post: fish shellに移行した">&laquo; fish shellに移行した</a>
       
       
-        <a class="basic-alignment right" href="/blog/2013/01/09/ruby2-rails4-new-project/" title="Next Post: Ruby2.0+Rails4で新規プロジェクトを作成したメモ">Ruby2.0+Rails4で新規プロジェクトを作成したメモ &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2017/03/08/using-rdbtools/" title="Next Post: rdbtoolsを使ってredisのデータの内訳を調べた">rdbtoolsを使ってredisのデータの内訳を調べた &raquo;</a>
       
     </p>
   </footer>

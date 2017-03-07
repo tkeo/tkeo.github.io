@@ -4,7 +4,7 @@
   <title><![CDATA[blog.tkeo.info]]></title>
   <link href="http://blog.tkeo.info/atom.xml" rel="self"/>
   <link href="http://blog.tkeo.info/"/>
-  <updated>2017-03-08T02:29:30+09:00</updated>
+  <updated>2017-03-08T02:30:38+09:00</updated>
   <id>http://blog.tkeo.info/</id>
   <author>
     <name><![CDATA[tkeo]]></name>
@@ -204,6 +204,42 @@ redis-objects gem使ってるとこういうキーのやつがいっぱいでき
 
 
 <p>余計なものがたくさんありそうなことはわかったけど、こいつらを消してもまだ足りなさそうな気がするなあ。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Octopressデプロイ環境を作り直した]]></title>
+    <link href="http://blog.tkeo.info/blog/2017/02/02/octopress-setup-again/"/>
+    <updated>2017-02-02T21:44:43+09:00</updated>
+    <id>http://blog.tkeo.info/blog/2017/02/02/octopress-setup-again</id>
+    <content type="html"><![CDATA[<p>雑なメモ。
+会社からでも更新できるように環境を作った。</p>
+
+<p>とりあえずcloneしてsourceブランチに切り替える。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git clone git@github.com:tkeo/tkeo.github.io.git blog
+</span><span class='line'>cd blog
+</span><span class='line'>git co -t origin/source</span></code></pre></td></tr></table></div></figure>
+
+
+<p>もろもろ必要なgemをinstallする。bundle execとか付けたくないので雑にgemsetに突っ込む。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rbenv gemset init blog
+</span><span class='line'>bundle</span></code></pre></td></tr></table></div></figure>
+
+
+<p>デプロイするには_deployディレクトリにmasterブランチが必要なのでworktreeを作る。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git worktree add _deploy master</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでOK。</p>
 ]]></content>
   </entry>
   
