@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://blog.tkeo.info/blog/2017/03/20/refinements/</loc>
+<lastmod>2017-03-20T22:48:28+09:00</lastmod>
+</url>
+<url>
 <loc>http://blog.tkeo.info/blog/2017/03/08/using-rdbtools/</loc>
 <lastmod>2017-03-08T01:06:23+09:00</lastmod>
 </url>
@@ -62,6 +66,9 @@
 </url>
 <url>
 <loc>http://blog.tkeo.info/blog/categories/redis/</loc>
+</url>
+<url>
+<loc>http://blog.tkeo.info/blog/categories/ruby/</loc>
 </url>
 <url>
 <loc>http://blog.tkeo.info/posts/2/</loc>

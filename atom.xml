@@ -4,7 +4,7 @@
   <title><![CDATA[blog.tkeo.info]]></title>
   <link href="http://blog.tkeo.info/atom.xml" rel="self"/>
   <link href="http://blog.tkeo.info/"/>
-  <updated>2017-03-08T02:30:38+09:00</updated>
+  <updated>2017-03-20T22:53:56+09:00</updated>
   <id>http://blog.tkeo.info/</id>
   <author>
     <name><![CDATA[tkeo]]></name>
@@ -12,6 +12,254 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[rubyのrefinementsを使ってみたかった]]></title>
+    <link href="http://blog.tkeo.info/blog/2017/03/20/refinements/"/>
+    <updated>2017-03-20T22:48:28+09:00</updated>
+    <id>http://blog.tkeo.info/blog/2017/03/20/refinements</id>
+    <content type="html"><![CDATA[<p>今やってるプロジェクトでrefinementsを使うのが適していそうな場面が出てきたので初めて使ってみることにしたがなんだか微妙な感じになったという日記。</p>
+
+<p>試したバージョンは2.4.0で、このあたりを参考にした。</p>
+
+<ul>
+<li><a href="https://docs.ruby-lang.org/en/trunk/syntax/refinements_rdoc.html">https://docs.ruby-lang.org/en/trunk/syntax/refinements_rdoc.html</a></li>
+<li><a href="http://qiita.com/joker1007/items/68d066a12bc763bd2cb4">http://qiita.com/joker1007/items/68d066a12bc763bd2cb4</a></li>
+</ul>
+
+
+<p>同じmoduleをincludeしているクラスに対して共通のrefinementsを適用したかったが、moduleに対してrefineは使えないのでrefineブロック内でincludeしてみたが…</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>module C
+</span><span class='line'>end
+</span><span class='line'>class A
+</span><span class='line'>  include C
+</span><span class='line'>end
+</span><span class='line'>class B
+</span><span class='line'>  include C
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>module Foo
+</span><span class='line'>  def foo
+</span><span class='line'>    "foo"
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def foobar
+</span><span class='line'>    foo + "bar"
+</span><span class='line'>  end
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>module R
+</span><span class='line'>  refine A do
+</span><span class='line'>    include Foo
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  refine B do
+</span><span class='line'>    include Foo
+</span><span class='line'>  end
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>using R
+</span><span class='line'>puts A.new.foo    # =&gt; foo
+</span><span class='line'>puts B.new.foo    # =&gt; foo
+</span><span class='line'>puts A.new.foobar # =&gt; undefined local variable or method `foo' for #&lt;A:0x007fc71782dcb0&gt; (NameError)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>どうもそう単純にはいかないらしい。ぐぬぬ。</p>
+
+<p>いろいろこねくり回した結果、思った通りの動きをするコードは一応何通りか書けた。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>module C
+</span><span class='line'>end
+</span><span class='line'>class A
+</span><span class='line'>  include C
+</span><span class='line'>end
+</span><span class='line'>class B
+</span><span class='line'>  include C
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'># module_evalで無理やり突っ込むパターン
+</span><span class='line'>FooMethods = -&gt; {
+</span><span class='line'>  def foo
+</span><span class='line'>    "foo"
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  def foobar
+</span><span class='line'>    foo + "bar"
+</span><span class='line'>  end
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>module R
+</span><span class='line'>  refine A do
+</span><span class='line'>    module_eval do
+</span><span class='line'>      FooMethods.call
+</span><span class='line'>    end
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  refine B do
+</span><span class='line'>    module_eval do
+</span><span class='line'>      FooMethods.call
+</span><span class='line'>    end
+</span><span class='line'>  end
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'># module_eval内でrefineしちゃうパターン
+</span><span class='line'>module R2
+</span><span class='line'>  %w(A B).each do |klass|
+</span><span class='line'>    module_eval &lt;&lt;-CODE
+</span><span class='line'>      refine #{klass} do
+</span><span class='line'>        def foo
+</span><span class='line'>          "foo"
+</span><span class='line'>        end
+</span><span class='line'>
+</span><span class='line'>        def foobar
+</span><span class='line'>          foo + "bar"
+</span><span class='line'>        end
+</span><span class='line'>      end
+</span><span class='line'>    CODE
+</span><span class='line'>  end
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'># あきらめたパターン
+</span><span class='line'>module R3
+</span><span class='line'>  refine Object do
+</span><span class='line'>    def foo
+</span><span class='line'>      if kind_of?(C)
+</span><span class='line'>        "foo"
+</span><span class='line'>      else
+</span><span class='line'>        raise NoMethodError
+</span><span class='line'>      end
+</span><span class='line'>    end
+</span><span class='line'>
+</span><span class='line'>    def foobar
+</span><span class='line'>      if kind_of?(C)
+</span><span class='line'>        foo + "bar"
+</span><span class='line'>      else
+</span><span class='line'>        raise NoMethodError
+</span><span class='line'>      end
+</span><span class='line'>    end
+</span><span class='line'>  end
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>using R
+</span><span class='line'>puts A.new.foo    # =&gt; foo
+</span><span class='line'>puts B.new.foo    # =&gt; foo
+</span><span class='line'>puts A.new.foobar # =&gt; foobar</span></code></pre></td></tr></table></div></figure>
+
+
+<p>うーん…どれもなんかやだな。
+もうちょっとうまいやり方はないものか。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[rdbtoolsを使ってredisのデータの内訳を調べた]]></title>
@@ -204,6 +452,13 @@ redis-objects gem使ってるとこういうキーのやつがいっぱいでき
 
 
 <p>余計なものがたくさんありそうなことはわかったけど、こいつらを消してもまだ足りなさそうな気がするなあ。</p>
+
+<h2>追記</h2>
+
+<p>定期的に削除する/できるようにする前のデータが残っていたのでまとめて削除した。
+実装に手を入れたタイミングで消したつもりだった…。</p>
+
+<p><img src="http://blog.tkeo.info/images/screenshot-2017-03-10.png" alt="graph" /></p>
 ]]></content>
   </entry>
   

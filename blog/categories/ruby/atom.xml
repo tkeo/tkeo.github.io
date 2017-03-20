@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ruby | blog.tkeo.info]]></title>
+  <link href="http://blog.tkeo.info/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://blog.tkeo.info/"/>
+  <updated>2017-03-20T22:53:56+09:00</updated>
+  <id>http://blog.tkeo.info/</id>
+  <author>
+    <name><![CDATA[tkeo]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[rubyのrefinementsを使ってみたかった]]></title>
+    <link href="http://blog.tkeo.info/blog/2017/03/20/refinements/"/>
+    <updated>2017-03-20T22:48:28+09:00</updated>
+    <id>http://blog.tkeo.info/blog/2017/03/20/refinements</id>
+    <content type="html"><![CDATA[<p>今やってるプロジェクトでrefinementsを使うのが適していそうな場面が出てきたので初めて使ってみることにしたがなんだか微妙な感じになったという日記。</p>
+
+<p>試したバージョンは2.4.0で、このあたりを参考にした。</p>
+
+<ul>
+<li><a href="https://docs.ruby-lang.org/en/trunk/syntax/refinements_rdoc.html">https://docs.ruby-lang.org/en/trunk/syntax/refinements_rdoc.html</a></li>
+<li><a href="http://qiita.com/joker1007/items/68d066a12bc763bd2cb4">http://qiita.com/joker1007/items/68d066a12bc763bd2cb4</a></li>
+</ul>
+
+
+<p>同じmoduleをincludeしているクラスに対して共通のrefinementsを適用したかったが、moduleに対してrefineは使えないのでrefineブロック内でincludeしてみたが…</p>
+
+<pre><code>module C
+end
+class A
+  include C
+end
+class B
+  include C
+end
+
+module Foo
+  def foo
+    "foo"
+  end
+
+  def foobar
+    foo + "bar"
+  end
+end
+
+module R
+  refine A do
+    include Foo
+  end
+
+  refine B do
+    include Foo
+  end
+end
+
+using R
+puts A.new.foo    # =&gt; foo
+puts B.new.foo    # =&gt; foo
+puts A.new.foobar # =&gt; undefined local variable or method `foo' for #&lt;A:0x007fc71782dcb0&gt; (NameError)
+</code></pre>
+
+<p>どうもそう単純にはいかないらしい。ぐぬぬ。</p>
+
+<p>いろいろこねくり回した結果、思った通りの動きをするコードは一応何通りか書けた。</p>
+
+<pre><code>module C
+end
+class A
+  include C
+end
+class B
+  include C
+end
+
+# module_evalで無理やり突っ込むパターン
+FooMethods = -&gt; {
+  def foo
+    "foo"
+  end
+
+  def foobar
+    foo + "bar"
+  end
+}
+
+module R
+  refine A do
+    module_eval do
+      FooMethods.call
+    end
+  end
+
+  refine B do
+    module_eval do
+      FooMethods.call
+    end
+  end
+end
+
+# module_eval内でrefineしちゃうパターン
+module R2
+  %w(A B).each do |klass|
+    module_eval &lt;&lt;-CODE
+      refine #{klass} do
+        def foo
+          "foo"
+        end
+
+        def foobar
+          foo + "bar"
+        end
+      end
+    CODE
+  end
+end
+
+# あきらめたパターン
+module R3
+  refine Object do
+    def foo
+      if kind_of?(C)
+        "foo"
+      else
+        raise NoMethodError
+      end
+    end
+
+    def foobar
+      if kind_of?(C)
+        foo + "bar"
+      else
+        raise NoMethodError
+      end
+    end
+  end
+end
+
+using R
+puts A.new.foo    # =&gt; foo
+puts B.new.foo    # =&gt; foo
+puts A.new.foobar # =&gt; foobar
+</code></pre>
+
+<p>うーん…どれもなんかやだな。
+もうちょっとうまいやり方はないものか。</p>
+]]></content>
+  </entry>
+  
+</feed>

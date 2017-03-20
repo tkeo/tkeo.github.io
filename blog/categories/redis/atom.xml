@@ -4,7 +4,7 @@
   <title><![CDATA[Category: redis | blog.tkeo.info]]></title>
   <link href="http://blog.tkeo.info/blog/categories/redis/atom.xml" rel="self"/>
   <link href="http://blog.tkeo.info/"/>
-  <updated>2017-03-08T02:30:38+09:00</updated>
+  <updated>2017-03-20T22:53:56+09:00</updated>
   <id>http://blog.tkeo.info/</id>
   <author>
     <name><![CDATA[tkeo]]></name>
@@ -134,6 +134,13 @@ end
 </code></pre>
 
 <p>余計なものがたくさんありそうなことはわかったけど、こいつらを消してもまだ足りなさそうな気がするなあ。</p>
+
+<h2>追記</h2>
+
+<p>定期的に削除する/できるようにする前のデータが残っていたのでまとめて削除した。
+実装に手を入れたタイミングで消したつもりだった…。</p>
+
+<p><img src="/images/screenshot-2017-03-10.png" alt="graph" /></p>
 ]]></content>
   </entry>
   
