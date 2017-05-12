@@ -7,12 +7,12 @@ categories: ruby
 ---
 今やってるプロジェクトでrefinementsを使うのが適していそうな場面が出てきたので初めて使ってみることにしたがなんだか微妙な感じになったという日記。
 
-試したバージョンは2.4.0で、このあたりを参考にした。
+試したバージョンは2.3.3と2.4.0で、このあたりを参考にした。
 
 * https://docs.ruby-lang.org/en/trunk/syntax/refinements_rdoc.html
 * http://qiita.com/joker1007/items/68d066a12bc763bd2cb4
 
-同じmoduleをincludeしているクラスに対して共通のrefinementsを適用したかったが、moduleに対してrefineは使えないのでrefineブロック内でincludeしてみたが…
+同じmoduleをincludeしているクラスに対して共通のrefinementsを適用したかったが、2.3ではmoduleに対してrefineは使えないのでrefineブロック内でincludeしてみたが…
 
 ```
 module C
