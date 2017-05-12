@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: prometheus | blog.tkeo.info]]></title>
+  <link href="http://blog.tkeo.info/blog/categories/prometheus/atom.xml" rel="self"/>
+  <link href="http://blog.tkeo.info/"/>
+  <updated>2017-05-12T23:43:01+09:00</updated>
+  <id>http://blog.tkeo.info/</id>
+  <author>
+    <name><![CDATA[tkeo]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[prometheus, blackbox_exporter, komachi_heartbeat]]></title>
+    <link href="http://blog.tkeo.info/blog/2017/05/12/prometheus-blackbox-exporter/"/>
+    <updated>2017-05-12T22:00:33+09:00</updated>
+    <id>http://blog.tkeo.info/blog/2017/05/12/prometheus-blackbox-exporter</id>
+    <content type="html"><![CDATA[<p>最近<a href="https://prometheus.io/">Prometheus</a>の導入に向けて検証中。
+今日は外形監視の設定を試した。</p>
+
+<p>外形監視には<a href="https://github.com/prometheus/blackbox_exporter">blackbox_exporter</a>を使う。
+<a href="https://github.com/mitaku/komachi_heartbeat">komachi_heartbeat</a>を導入しているので、レスポンスとして<code>heartbeat:ok</code>が返ってくるかチェックできればよい。</p>
+
+<pre><code># prometheus.yml
+scrape_configs:
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_komachi_heartbeat]
+      path: ['/path/to/heartbeat']
+    static_configs:
+      - targets:
+        - example.com
+    relabel_configs:
+      - source_labels: [__address__, __param_path]
+        regex: (.*);(.*)
+        target_label: __param_target
+        replacement: http://${1}${2}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: 127.0.0.1:9115  # blackbox_exporterが動いているIPアドレスにする
+</code></pre>
+
+<pre><code># blackbox.yml
+modules:
+  http_komachi_heartbeat:
+    prober: http
+    timeout: 5s
+    http:
+      fail_if_not_matches_regexp:
+      - "heartbeat:ok"
+</code></pre>
+
+<p>複数あるwebサーバーそれぞれに対してリクエストを投げるのは以下のような感じ。</p>
+
+<pre><code># prometheus.yml
+scrape_configs:
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_komachi_heartbeat]
+      path: ['/path/to/heartbeat']
+    ec2_sd_configs:
+      - region: ap-northeast-1
+        port: 9100
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_role]
+        regex: web
+        action: keep
+      - source_labels: [__meta_ec2_tag_Name]
+        regex: (.*)
+        target_label: name
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: instance
+        replacement: ${1}
+      - source_labels: [__meta_ec2_public_ip, __param_path]
+        regex: (.*);(.*)
+        target_label: __param_target
+        replacement: http://${1}${2}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: 127.0.0.1:9115  # blackbox_exporterが動いているIPアドレスにする
+</code></pre>
+
+<pre><code># blackbox.yml
+modules:
+  http_komachi_heartbeat:
+    prober: http
+    timeout: 5s
+    http:
+      headers:
+        Host: example.com
+      fail_if_not_matches_regexp:
+      - "heartbeat:ok"
+</code></pre>
+
+<p>監視したいドメインが複数ある場合、ドメインごとにblackbox.ymlの設定を増やしていかないといけないのが微妙かもしれない。</p>
+]]></content>
+  </entry>
+  
+</feed>

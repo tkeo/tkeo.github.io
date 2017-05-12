@@ -9,10 +9,7 @@
   <meta name="author" content="tkeo">
 
   
-  <meta name="description" content="前準備 $ brew install openssl
-$ brew link openssl
-$ brew install readline
-$ brew link readline プロジェクトのディレクトリ作る。 $ mkdir hoge &amp;&amp; cd hoge ruby &hellip;">
+  <meta name="description" content="正式版が出る頃には変わっている可能性が高いが、現時点でのメモを残しておく。 minitest-rails https://github.com/blowmage/minitest-rails Gemfile に追加。 gem "minitest-rails" 必要なファイルを生成。 $ rails &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +63,271 @@ $ brew link readline プロジェクトのディレクトリ作る。 $ mkdir ho
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/17/rails4-minitest-spork-guard/">Rails4 で MiniTest + Spork + Guard</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2013-01-17T14:33:15+09:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>2:33 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>正式版が出る頃には変わっている可能性が高いが、現時点でのメモを残しておく。</p>
+
+<h2>minitest-rails</h2>
+
+<p><a href="https://github.com/blowmage/minitest-rails">https://github.com/blowmage/minitest-rails</a></p>
+
+<p>Gemfile に追加。</p>
+
+<pre><code>gem "minitest-rails"
+</code></pre>
+
+<p>必要なファイルを生成。</p>
+
+<pre><code>$ rails generate mini_test:install
+</code></pre>
+
+<p>test/minitest_helper.rb が生成される。</p>
+
+<pre><code>ENV["RAILS_ENV"] = "test"
+require File.expand_path('../../config/environment', __FILE__)
+
+require "minitest/autorun"
+require "minitest/rails"
+
+# Add `gem "minitest/rails/capybara"` to the test group of your Gemfile
+# and uncomment the following if you want Capybara feature tests
+# require "minitest/rails/capybara"
+
+# Uncomment if you want awesome colorful output
+# require "minitest/pride"
+
+class ActiveSupport::TestCase
+  # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
+  fixtures :all
+
+  # Add more helper methods to be used by all tests here...
+end
+</code></pre>
+
+<p>各testファイルでこれを読み込むために下の一行が必要。</p>
+
+<pre><code>require 'minitest_helper'
+</code></pre>
+
+<p>動作確認。</p>
+
+<pre><code>$ ruby -Itest test/foo/bar_test.rb
+</code></pre>
+
+<h2>spork-minitest</h2>
+
+<p><a href="https://github.com/semaperepelitsa/spork-minitest">https://github.com/semaperepelitsa/spork-minitest</a></p>
+
+<p>Gemfile に追加。</p>
+
+<pre><code>gem "spork", "~&gt; 1.0rc"
+gem "spork-minitest", "~&gt; 1.0.0.beta1"
+</code></pre>
+
+<p>下記コマンドを実行し、minitest_helper に spork 向けの設定を追加する。</p>
+
+<pre><code>$ spork minitest --bootstrap
+</code></pre>
+
+<p>test/minitest_helper.rb に追記されるので適宜編集する。</p>
+
+<pre><code>$LOAD_PATH &lt;&lt; "test"
+require 'rubygems'
+require 'spork'
+#uncomment the following line to use spork with the debugger
+#require 'spork/ext/ruby-debug'
+
+Spork.prefork do
+  # Loading more in this block will cause your tests to run faster. However,
+  # if you change any configuration or code from libraries loaded here, you'll
+  # need to restart spork for it take effect.
+
+  ENV["RAILS_ENV"] = "test"
+  require File.expand_path('../../config/environment', __FILE__)
+
+  require "minitest/autorun"
+  require "minitest/rails"
+  require 'simplecov'
+  require 'simplecov-rcov'
+
+  SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
+  SimpleCov.start 'rails'
+
+  # Add `gem "minitest/rails/capybara"` to the test group of your Gemfile
+  # and uncomment the following if you want Capybara feature tests
+  # require "minitest/rails/capybara"
+
+  # Uncomment if you want awesome colorful output
+  # require "minitest/pride"
+
+  class ActiveSupport::TestCase
+    # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
+    fixtures :all
+
+    # Add more helper methods to be used by all tests here...
+  end
+end
+
+Spork.each_run do
+  # This code will be run each time you run your specs.
+
+end
+
+# --- Instructions ---
+# Sort the contents of this file into a Spork.prefork and a Spork.each_run
+# block.
+#
+# The Spork.prefork block is run only once when the spork server is started.
+# You typically want to place most of your (slow) initializer code in here, in
+# particular, require'ing any 3rd-party gems that you don't normally modify
+# during development.
+#
+# The Spork.each_run block is run each time you run your specs.  In case you
+# need to load files that tend to change during development, require them here.
+# With Rails, your application modules are loaded automatically, so sometimes
+# this block can remain empty.
+#
+# Note: You can modify files loaded *from* the Spork.each_run block without
+# restarting the spork server.  However, this file itself will not be reloaded,
+# so if you change any of the code inside the each_run block, you still need to
+# restart the server.  In general, if you have non-trivial code in this file,
+# it's advisable to move it into a separate file so you can easily edit it
+# without restarting spork.  (For example, with RSpec, you could move
+# non-trivial code into a file spec/support/my_helper.rb, making sure that the
+# spec/support/* files are require'd from inside the each_run block.)
+#
+# Any code that is left outside the two blocks will be run during preforking
+# *and* during each_run -- that's probably not what you want.
+#
+# These instructions should self-destruct in 10 seconds.  If they don't, feel
+# free to delete them.
+</code></pre>
+
+<p>sporkの動作確認をする。</p>
+
+<pre><code>$ spork
+</code></pre>
+
+<p>sporkを立ち上げた状態のまま、別窓を開いて testdrb でテスト実行してみる。</p>
+
+<pre><code>$ testdrb test/**/*.rb
+</code></pre>
+
+<h2>guard-minitest</h2>
+
+<p><a href="https://github.com/guard/guard-minitest">https://github.com/guard/guard-minitest</a></p>
+
+<p>本家のものを使いたいところではあるが、sporkと組み合わせた時に動かないので一旦他の人が作ったブランチを使わせてもらう。
+(ref. <a href="https://github.com/guard/guard-minitest/pull/41">https://github.com/guard/guard-minitest/pull/41</a>)</p>
+
+<p>sporkを使わないのであれば本家のものでもおそらく問題ない。</p>
+
+<p>Gemfile に追加。</p>
+
+<pre><code>gem "guard-minitest", github: "itrcdevs/guard-minitest", branch: "fix_for_spork-minitest"
+</code></pre>
+
+<p>設定ファイルを生成する。すでにファイルが存在する場合は内容が追記される。</p>
+
+<pre><code>$ guard init minitest
+</code></pre>
+
+<p>生成された Guardfile を編集する。</p>
+
+<pre><code># More info at https://github.com/guard/guard#readme
+
+guard 'minitest' do
+  # with Minitest
+  watch(%r|^test/(.*)_test\.rb|)
+  watch(%r|^lib/(.*)([^/]+)\.rb|)     { |m| "test/#{m[1]}test_#{m[2]}.rb" }
+  watch(%r|^test/test_helper\.rb|)    { "test" }
+
+  # Rails
+  watch(%r|^app/controllers/(.*)\.rb|) { |m| "test/controllers/#{m[1]}_test.rb" }
+  watch(%r|^app/helpers/(.*)\.rb|)     { |m| "test/helpers/#{m[1]}_test.rb" }
+  watch(%r|^app/models/(.*)\.rb|)      { |m| "test/models/#{m[1]}_test.rb" }
+end
+</code></pre>
+
+<p>guard の動作確認。</p>
+
+<pre><code>$ guard
+</code></pre>
+
+<p>適当にファイルをtouchしてみるとテストが走るはず。
+何も起こらない場合はちゃんと監視対象に入っているか記述を見なおしてみる。</p>
+
+<h2>guard-spork</h2>
+
+<p>Gemfile に追加。</p>
+
+<pre><code>gem "guard-spork"
+</code></pre>
+
+<p>Guardfile に設定を追加する。</p>
+
+<pre><code>$ guard init spork
+</code></pre>
+
+<p>Guardfile に追加された spork の箇所の編集と、minitest で drb を使うように変更する。</p>
+
+<pre><code>guard 'spork', minitest: true, minitest_env: { 'RAILS_ENV' =&gt; 'test' }, bundler: true do
+  watch('config/application.rb')
+  watch('config/environment.rb')
+  watch('config/environments/test.rb')
+  watch(%r{^config/initializers/.+\.rb$})
+  watch('Gemfile')
+  watch('Gemfile.lock')
+  watch('test/minitest_helper.rb') { 'test' }
+end
+
+guard 'minitest', drb: true do
+  # (省略)
+end
+</code></pre>
+
+<p>実行。</p>
+
+<pre><code>$ guard
+</code></pre>
+
+<p>これだけで spork が自動的に起動する。
+先と同じようにファイルを編集したときに動けばOK</p>
+
+<h2>その他</h2>
+
+<ul>
+<li>factory_firl_rails を入れると mintiest 用のgeneratorがちゃんと動かない (追記：githubのmasterは修正されてた)</li>
+<li>まだプロジェクトの規模が小さいのでsporkの恩恵を感じられない…</li>
+<li>spork-rails が必要かと思ってrails4ブランチも含めて試してみたが要らなかった（入れると逆にダメになる）</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -327,6 +589,10 @@ gem 'rails', github: 'rails/rails'
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/05/12/prometheus-blackbox-exporter/">prometheus, blackbox_exporter, komachi_heartbeat</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/03/20/refinements/">rubyのrefinementsを使ってみたかった</a>
       </li>
     
@@ -340,10 +606,6 @@ gem 'rails', github: 'rails/rails'
     
       <li class="post">
         <a href="/blog/2017/01/31/switch-to-fish-shell/">fish shellに移行した</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/02/26/git-diff-utf-16/">UTF-16なファイルのgit diffを見たい</a>
       </li>
     
   </ul>

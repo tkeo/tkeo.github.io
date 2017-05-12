@@ -4,7 +4,7 @@
   <title><![CDATA[blog.tkeo.info]]></title>
   <link href="http://blog.tkeo.info/atom.xml" rel="self"/>
   <link href="http://blog.tkeo.info/"/>
-  <updated>2017-03-20T22:53:56+09:00</updated>
+  <updated>2017-05-12T23:43:01+09:00</updated>
   <id>http://blog.tkeo.info/</id>
   <author>
     <name><![CDATA[tkeo]]></name>
@@ -14,13 +14,176 @@
 
   
   <entry>
+    <title type="html"><![CDATA[prometheus, blackbox_exporter, komachi_heartbeat]]></title>
+    <link href="http://blog.tkeo.info/blog/2017/05/12/prometheus-blackbox-exporter/"/>
+    <updated>2017-05-12T22:00:33+09:00</updated>
+    <id>http://blog.tkeo.info/blog/2017/05/12/prometheus-blackbox-exporter</id>
+    <content type="html"><![CDATA[<p>最近<a href="https://prometheus.io/">Prometheus</a>の導入に向けて検証中。
+今日は外形監視の設定を試した。</p>
+
+<p>外形監視には<a href="https://github.com/prometheus/blackbox_exporter">blackbox_exporter</a>を使う。
+<a href="https://github.com/mitaku/komachi_heartbeat">komachi_heartbeat</a>を導入しているので、レスポンスとして<code>heartbeat:ok</code>が返ってくるかチェックできればよい。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># prometheus.yml
+</span><span class='line'>scrape_configs:
+</span><span class='line'>  - job_name: 'blackbox'
+</span><span class='line'>    metrics_path: /probe
+</span><span class='line'>    params:
+</span><span class='line'>      module: [http_komachi_heartbeat]
+</span><span class='line'>      path: ['/path/to/heartbeat']
+</span><span class='line'>    static_configs:
+</span><span class='line'>      - targets:
+</span><span class='line'>        - example.com
+</span><span class='line'>    relabel_configs:
+</span><span class='line'>      - source_labels: [__address__, __param_path]
+</span><span class='line'>        regex: (.*);(.*)
+</span><span class='line'>        target_label: __param_target
+</span><span class='line'>        replacement: http://${1}${2}
+</span><span class='line'>      - source_labels: []
+</span><span class='line'>        regex: .*
+</span><span class='line'>        target_label: __address__
+</span><span class='line'>        replacement: 127.0.0.1:9115  # blackbox_exporterが動いているIPアドレスにする</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># blackbox.yml
+</span><span class='line'>modules:
+</span><span class='line'>  http_komachi_heartbeat:
+</span><span class='line'>    prober: http
+</span><span class='line'>    timeout: 5s
+</span><span class='line'>    http:
+</span><span class='line'>      fail_if_not_matches_regexp:
+</span><span class='line'>      - "heartbeat:ok"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>複数あるwebサーバーそれぞれに対してリクエストを投げるのは以下のような感じ。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># prometheus.yml
+</span><span class='line'>scrape_configs:
+</span><span class='line'>  - job_name: 'blackbox'
+</span><span class='line'>    metrics_path: /probe
+</span><span class='line'>    params:
+</span><span class='line'>      module: [http_komachi_heartbeat]
+</span><span class='line'>      path: ['/path/to/heartbeat']
+</span><span class='line'>    ec2_sd_configs:
+</span><span class='line'>      - region: ap-northeast-1
+</span><span class='line'>        port: 9100
+</span><span class='line'>    relabel_configs:
+</span><span class='line'>      - source_labels: [__meta_ec2_tag_role]
+</span><span class='line'>        regex: web
+</span><span class='line'>        action: keep
+</span><span class='line'>      - source_labels: [__meta_ec2_tag_Name]
+</span><span class='line'>        regex: (.*)
+</span><span class='line'>        target_label: name
+</span><span class='line'>        replacement: ${1}
+</span><span class='line'>      - source_labels: [__param_target]
+</span><span class='line'>        regex: (.*)
+</span><span class='line'>        target_label: instance
+</span><span class='line'>        replacement: ${1}
+</span><span class='line'>      - source_labels: [__meta_ec2_public_ip, __param_path]
+</span><span class='line'>        regex: (.*);(.*)
+</span><span class='line'>        target_label: __param_target
+</span><span class='line'>        replacement: http://${1}${2}
+</span><span class='line'>      - source_labels: []
+</span><span class='line'>        regex: .*
+</span><span class='line'>        target_label: __address__
+</span><span class='line'>        replacement: 127.0.0.1:9115  # blackbox_exporterが動いているIPアドレスにする</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># blackbox.yml
+</span><span class='line'>modules:
+</span><span class='line'>  http_komachi_heartbeat:
+</span><span class='line'>    prober: http
+</span><span class='line'>    timeout: 5s
+</span><span class='line'>    http:
+</span><span class='line'>      headers:
+</span><span class='line'>        Host: example.com
+</span><span class='line'>      fail_if_not_matches_regexp:
+</span><span class='line'>      - "heartbeat:ok"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>監視したいドメインが複数ある場合、ドメインごとにblackbox.ymlの設定を増やしていかないといけないのが微妙かもしれない。</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[rubyのrefinementsを使ってみたかった]]></title>
     <link href="http://blog.tkeo.info/blog/2017/03/20/refinements/"/>
     <updated>2017-03-20T22:48:28+09:00</updated>
     <id>http://blog.tkeo.info/blog/2017/03/20/refinements</id>
     <content type="html"><![CDATA[<p>今やってるプロジェクトでrefinementsを使うのが適していそうな場面が出てきたので初めて使ってみることにしたがなんだか微妙な感じになったという日記。</p>
 
-<p>試したバージョンは2.4.0で、このあたりを参考にした。</p>
+<p>試したバージョンは2.3.3と2.4.0で、このあたりを参考にした。</p>
 
 <ul>
 <li><a href="https://docs.ruby-lang.org/en/trunk/syntax/refinements_rdoc.html">https://docs.ruby-lang.org/en/trunk/syntax/refinements_rdoc.html</a></li>
@@ -28,7 +191,7 @@
 </ul>
 
 
-<p>同じmoduleをincludeしているクラスに対して共通のrefinementsを適用したかったが、moduleに対してrefineは使えないのでrefineブロック内でincludeしてみたが…</p>
+<p>同じmoduleをincludeしているクラスに対して共通のrefinementsを適用したかったが、2.3ではmoduleに対してrefineは使えないのでrefineブロック内でincludeしてみたが…</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
