@@ -9,7 +9,7 @@
   <meta name="author" content="tkeo">
 
   
-  <meta name="description" content="正式版が出る頃には変わっている可能性が高いが、現時点でのメモを残しておく。 minitest-rails https://github.com/blowmage/minitest-rails Gemfile に追加。 gem "minitest-rails" 必要なファイルを生成。 $ rails &hellip;">
+  <meta name="description" content="railsアプリ開発中にmigrationでエラーが起こって、一部だけ変更が適用された戻すのがめんどくさい中途半端な状態になることがよくあって今日もうぎゃーってなったので、トランザクションで囲んでくれるような仕組みないのかなと思って調べてみると http://guides.rubyonrails. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -63,6 +63,60 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/05/diary/">日記</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2013-02-05T01:13:48+09:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>1:13 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>railsアプリ開発中にmigrationでエラーが起こって、一部だけ変更が適用された戻すのがめんどくさい中途半端な状態になることがよくあって今日もうぎゃーってなったので、トランザクションで囲んでくれるような仕組みないのかなと思って調べてみると</p>
+
+<p><a href="http://guides.rubyonrails.org/migrations.html">http://guides.rubyonrails.org/migrations.html</a></p>
+
+<blockquote><p>On databases that support transactions with statements that change the schema (such as PostgreSQL or SQLite3), migrations are wrapped in a transaction. If the database does not support this (for example MySQL) then when a migration fails the parts of it that succeeded will not be rolled back. You will have to rollback the changes that were made by hand.</p></blockquote>
+
+<p>なんだってー</p>
+
+<p>postgresはデフォルトで対応しているが、mysqlはサポートされてなくて非対応。知らなかった…。</p>
+
+<p>一応mysqlのドキュメントにもあたってみる。</p>
+
+<p><a href="http://dev.mysql.com/doc/refman/5.6/en/cannot-roll-back.html">http://dev.mysql.com/doc/refman/5.6/en/cannot-roll-back.html</a></p>
+
+<blockquote><p>Some statements cannot be rolled back. In general, these include data definition language (DDL) statements, such as those that create or drop databases, those that create, drop, or alter tables or stored routines.</p></blockquote>
+
+<p>DDLはロールバックできない、と。</p>
+
+<p>開発環境だけDBサーバ変えるとかしたくないし、どうしたらいいかなあ。</p>
+
+<p>という日記。</p>
+
+<h2>追記</h2>
+
+<p><code>change_table</code>で<code>bulk: true</code>オプションを付けてあげればいいらしい。
+ひとつのALTERでまとめてカラム追加・削除されるので中途半端な状態は作られない。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -589,6 +643,10 @@ gem 'rails', github: 'rails/rails'
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/05/29/elasticache-memory-alert/">ElastiCacheの空きメモリのアラートを設定した</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/05/12/prometheus-blackbox-exporter/">prometheus, blackbox_exporter, komachi_heartbeat</a>
       </li>
     
@@ -602,10 +660,6 @@ gem 'rails', github: 'rails/rails'
     
       <li class="post">
         <a href="/blog/2017/02/02/octopress-setup-again/">Octopressデプロイ環境を作り直した</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2017/01/31/switch-to-fish-shell/">fish shellに移行した</a>
       </li>
     
   </ul>

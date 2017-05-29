@@ -1,0 +1,486 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>ElastiCacheの空きメモリのアラートを設定した - blog.tkeo.info</title>
+  <meta name="author" content="tkeo">
+
+  
+  <meta name="description" content="メモリの空きが20%切ったらwarning投げるとか、アラートのしきい値を割合で設定したい。
+CloudWatchで取れるのは使用しているサイズなので、なんとかして最大値を取得して計算する必要がある。 最大値自体はdescribe-cache- &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.tkeo.info/blog/2017/05/29/elasticache-memory-alert">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="blog.tkeo.info" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">blog.tkeo.info</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.tkeo.info" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">ElastiCacheの空きメモリのアラートを設定した</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-05-29T21:44:01+09:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>9:44 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>メモリの空きが20%切ったらwarning投げるとか、アラートのしきい値を割合で設定したい。
+CloudWatchで取れるのは使用しているサイズなので、なんとかして最大値を取得して計算する必要がある。</p>
+
+<p>最大値自体は<a href="http://docs.aws.amazon.com/cli/latest/reference/elasticache/describe-cache-parameters.html">describe-cache-parameters</a>で取れるのでファイルに書き出しておいて、node_exporterのtextfile collectorで読み込ませることにした。</p>
+
+<p>ファイルは下のような感じのスクリプトで生成した。
+あらかじめ取得した値を列挙したけど、めったにノード追加しないので都度取得でもよかったかもしれない。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>require "aws-sdk-core"
+</span><span class='line'>
+</span><span class='line'># elasticache.describe_cache_parameters(cache_parameter_group_name: "default.memcached1.4").
+</span><span class='line'>#   cache_node_type_specific_parameters.detect {|param| param.parameter_name == "max_cache_memory" }.
+</span><span class='line'>#   cache_node_type_specific_values.map {|value| [value.cache_node_type, value.value] }.to_h
+</span><span class='line'>
+</span><span class='line'>memcached_max_memories = {
+</span><span class='line'>  "cache.c1.xlarge"=&gt;"6600",
+</span><span class='line'>  "cache.m1.large"=&gt;"7100",
+</span><span class='line'>  "cache.m1.medium"=&gt;"3350",
+</span><span class='line'>  "cache.m1.small"=&gt;"1300",
+</span><span class='line'>  "cache.m1.xlarge"=&gt;"14600",
+</span><span class='line'>  "cache.m2.2xlarge"=&gt;"33800",
+</span><span class='line'>  "cache.m2.4xlarge"=&gt;"68000",
+</span><span class='line'>  "cache.m2.xlarge"=&gt;"16700",
+</span><span class='line'>  "cache.m3.2xlarge"=&gt;"28600",
+</span><span class='line'>  "cache.m3.large"=&gt;"6200",
+</span><span class='line'>  "cache.m3.medium"=&gt;"2850",
+</span><span class='line'>  "cache.m3.xlarge"=&gt;"13600",
+</span><span class='line'>  "cache.m4.10xlarge"=&gt;"158355",
+</span><span class='line'>  "cache.m4.2xlarge"=&gt;"30412",
+</span><span class='line'>  "cache.m4.4xlarge"=&gt;"62234",
+</span><span class='line'>  "cache.m4.large"=&gt;"6573",
+</span><span class='line'>  "cache.m4.xlarge"=&gt;"14618",
+</span><span class='line'>  "cache.r3.2xlarge"=&gt;"59600",
+</span><span class='line'>  "cache.r3.4xlarge"=&gt;"120600",
+</span><span class='line'>  "cache.r3.8xlarge"=&gt;"242600",
+</span><span class='line'>  "cache.r3.large"=&gt;"13800",
+</span><span class='line'>  "cache.r3.xlarge"=&gt;"29100",
+</span><span class='line'>  "cache.t1.micro"=&gt;"213",
+</span><span class='line'>  "cache.t2.medium"=&gt;"3301",
+</span><span class='line'>  "cache.t2.micro"=&gt;"555",
+</span><span class='line'>  "cache.t2.small"=&gt;"1588",
+</span><span class='line'>  "dax.r3.2xlarge"=&gt;"59600",
+</span><span class='line'>  "dax.r3.4xlarge"=&gt;"120600",
+</span><span class='line'>  "dax.r3.8xlarge"=&gt;"242600",
+</span><span class='line'>  "dax.r3.large"=&gt;"13800",
+</span><span class='line'>  "dax.r3.xlarge"=&gt;"29100"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'># elasticache.describe_cache_parameters(cache_parameter_group_name: "default.redis2.8").
+</span><span class='line'>#   cache_node_type_specific_parameters.detect {|param| param.parameter_name == "maxmemory" }.
+</span><span class='line'>#   cache_node_type_specific_values.map {|value| [value.cache_node_type, value.value] }.to_h
+</span><span class='line'>
+</span><span class='line'>redis_max_memories = {
+</span><span class='line'>  "cache.c1.xlarge"=&gt;"6501171200",
+</span><span class='line'>  "cache.m1.large"=&gt;"7025459200",
+</span><span class='line'>  "cache.m1.medium"=&gt;"3093299200",
+</span><span class='line'>  "cache.m1.small"=&gt;"943718400",
+</span><span class='line'>  "cache.m1.xlarge"=&gt;"14889779200",
+</span><span class='line'>  "cache.m2.2xlarge"=&gt;"35022438400",
+</span><span class='line'>  "cache.m2.4xlarge"=&gt;"70883737600",
+</span><span class='line'>  "cache.m2.xlarge"=&gt;"17091788800",
+</span><span class='line'>  "cache.m3.2xlarge"=&gt;"29989273600",
+</span><span class='line'>  "cache.m3.large"=&gt;"6501171200",
+</span><span class='line'>  "cache.m3.medium"=&gt;"2988441600",
+</span><span class='line'>  "cache.m3.xlarge"=&gt;"14260633600",
+</span><span class='line'>  "cache.m4.10xlarge"=&gt;"166047614239",
+</span><span class='line'>  "cache.m4.2xlarge"=&gt;"31889126359",
+</span><span class='line'>  "cache.m4.4xlarge"=&gt;"65257290629",
+</span><span class='line'>  "cache.m4.large"=&gt;"6892593152",
+</span><span class='line'>  "cache.m4.xlarge"=&gt;"15328501760",
+</span><span class='line'>  "cache.r3.2xlarge"=&gt;"62495129600",
+</span><span class='line'>  "cache.r3.4xlarge"=&gt;"126458265600",
+</span><span class='line'>  "cache.r3.8xlarge"=&gt;"254384537600",
+</span><span class='line'>  "cache.r3.large"=&gt;"14470348800",
+</span><span class='line'>  "cache.r3.xlarge"=&gt;"30513561600",
+</span><span class='line'>  "cache.t1.micro"=&gt;"142606336",
+</span><span class='line'>  "cache.t2.medium"=&gt;"3461349376",
+</span><span class='line'>  "cache.t2.micro"=&gt;"581959680",
+</span><span class='line'>  "cache.t2.small"=&gt;"1665138688",
+</span><span class='line'>  "dax.r3.2xlarge"=&gt;"62495129600",
+</span><span class='line'>  "dax.r3.4xlarge"=&gt;"126458265600",
+</span><span class='line'>  "dax.r3.8xlarge"=&gt;"254384537600",
+</span><span class='line'>  "dax.r3.large"=&gt;"14470348800",
+</span><span class='line'>  "dax.r3.xlarge"=&gt;"30513561600"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>elasticache = Aws::ElastiCache::Client.new(region: "ap-northeast-1")
+</span><span class='line'>cache_clusters = elasticache.describe_cache_clusters(show_cache_node_info: true).cache_clusters
+</span><span class='line'>cache_clusters.each do |cluster|
+</span><span class='line'>  if cluster.engine == "memcached"
+</span><span class='line'>    max_memory = memcached_max_memories[cluster.cache_node_type].to_i * 1024**2
+</span><span class='line'>  else
+</span><span class='line'>    max_memory = redis_max_memories[cluster.cache_node_type].to_i
+</span><span class='line'>  end
+</span><span class='line'>  cluster.cache_nodes.each do |node|
+</span><span class='line'>    puts %(aws_elasticache_max_memory_bytes{cache_cluster_id="#{cluster.cache_cluster_id}",cache_node_id="#{node.cache_node_id}"} #{max_memory})
+</span><span class='line'>  end
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>出力はこんな感じ。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aws_elasticache_max_memory_bytes{cache_cluster_id="memcache-example",cache_node_id="0001"} 581959680</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これをnode_exporter経由で取得した値と、cloudwatch_exporterで取得した値ではラベルが違うので、<code>metric_relabel_configs</code>を使って同じになるように調整する必要がある。
+exporter側でjobとinstanceを設定してもprometheusで読み込むときにprefixを付けてリネームしてしまうのでこうせざるを得なかった。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># prometheus.yml
+</span><span class='line'>scrape_configs:
+</span><span class='line'>  - job_name: 'prometheus'
+</span><span class='line'>    static_configs:
+</span><span class='line'>      - targets: ['localhost:9100']
+</span><span class='line'>    metric_relabel_configs:
+</span><span class='line'>      - source_labels: [__name__]
+</span><span class='line'>        regex: aws.*
+</span><span class='line'>        target_label: job
+</span><span class='line'>        replacement: cloudwatch
+</span><span class='line'>      - source_labels: [cache_cluster_id, cache_node_id]
+</span><span class='line'>        regex: (.+);(.+)
+</span><span class='line'>        target_label: instance
+</span><span class='line'>        replacement: cache.${1}.${2}
+</span><span class='line'>  - job_name: 'cloudwatch'
+</span><span class='line'>    static_configs:
+</span><span class='line'>      - targets: ['localhost:9106']
+</span><span class='line'>    metric_relabel_configs:
+</span><span class='line'>      - source_labels: [cache_cluster_id, cache_node_id]
+</span><span class='line'>        regex: (.+);(.+)
+</span><span class='line'>        target_label: instance
+</span><span class='line'>        replacement: cache.${1}.${2}
+</span><span class='line'>      - action: labeldrop
+</span><span class='line'>        regex: exported_job</span></code></pre></td></tr></table></div></figure>
+
+
+<p>あとはアラートのruleを設定するだけ。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ALERT elasticache_memcached_used_memory
+</span><span class='line'>  IF aws_elasticache_bytes_used_for_cache_items_average / aws_elasticache_max_memory_bytes &gt; 0.8
+</span><span class='line'>  LABELS { severity = "warning" }
+</span><span class='line'>  ANNOTATIONS {
+</span><span class='line'>    summary = "Used memory is large",
+</span><span class='line'>    description = "(): B"
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>ALERT elasticache_redis_used_memory
+</span><span class='line'>  IF aws_elasticache_bytes_used_for_cache_average / aws_elasticache_max_memory_bytes &gt; 0.5
+</span><span class='line'>  LABELS { severity = "warning" }
+</span><span class='line'>  ANNOTATIONS {
+</span><span class='line'>    summary = "Used memory is large",
+</span><span class='line'>    description = "(): B"
+</span><span class='line'>  }</span></code></pre></td></tr></table></div></figure>
+
+
+<p>はじめはredis,memcached共通で使える<code>aws_elasticache_freeable_memory_average</code>を使って設定したら1.4とかふざけた値になったので、使用量を元に計算するように変更した。
+これって自分の環境だけなのかな…</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">tkeo</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2017-05-29T21:44:01+09:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>9:44 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/prometheus/'>prometheus</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://blog.tkeo.info/blog/2017/05/29/elasticache-memory-alert/" data-via="" data-counturl="http://blog.tkeo.info/blog/2017/05/29/elasticache-memory-alert/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2017/05/12/prometheus-blackbox-exporter/" title="Previous Post: prometheus, blackbox_exporter, komachi_heartbeat">&laquo; prometheus, blackbox_exporter, komachi_heartbeat</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/05/29/elasticache-memory-alert/">ElastiCacheの空きメモリのアラートを設定した</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/05/12/prometheus-blackbox-exporter/">prometheus, blackbox_exporter, komachi_heartbeat</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/03/20/refinements/">rubyのrefinementsを使ってみたかった</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/03/08/using-rdbtools/">rdbtoolsを使ってredisのデータの内訳を調べた</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/02/02/octopress-setup-again/">Octopressデプロイ環境を作り直した</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2017 - tkeo -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

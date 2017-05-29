@@ -4,7 +4,7 @@
   <title><![CDATA[Category: prometheus | blog.tkeo.info]]></title>
   <link href="http://blog.tkeo.info/blog/categories/prometheus/atom.xml" rel="self"/>
   <link href="http://blog.tkeo.info/"/>
-  <updated>2017-05-12T23:43:01+09:00</updated>
+  <updated>2017-05-29T23:35:15+09:00</updated>
   <id>http://blog.tkeo.info/</id>
   <author>
     <name><![CDATA[tkeo]]></name>
@@ -12,6 +12,169 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[ElastiCacheの空きメモリのアラートを設定した]]></title>
+    <link href="http://blog.tkeo.info/blog/2017/05/29/elasticache-memory-alert/"/>
+    <updated>2017-05-29T21:44:01+09:00</updated>
+    <id>http://blog.tkeo.info/blog/2017/05/29/elasticache-memory-alert</id>
+    <content type="html"><![CDATA[<p>メモリの空きが20%切ったらwarning投げるとか、アラートのしきい値を割合で設定したい。
+CloudWatchで取れるのは使用しているサイズなので、なんとかして最大値を取得して計算する必要がある。</p>
+
+<p>最大値自体は<a href="http://docs.aws.amazon.com/cli/latest/reference/elasticache/describe-cache-parameters.html">describe-cache-parameters</a>で取れるのでファイルに書き出しておいて、node_exporterのtextfile collectorで読み込ませることにした。</p>
+
+<p>ファイルは下のような感じのスクリプトで生成した。
+あらかじめ取得した値を列挙したけど、めったにノード追加しないので都度取得でもよかったかもしれない。</p>
+
+<pre><code>require "aws-sdk-core"
+
+# elasticache.describe_cache_parameters(cache_parameter_group_name: "default.memcached1.4").
+#   cache_node_type_specific_parameters.detect {|param| param.parameter_name == "max_cache_memory" }.
+#   cache_node_type_specific_values.map {|value| [value.cache_node_type, value.value] }.to_h
+
+memcached_max_memories = {
+  "cache.c1.xlarge"=&gt;"6600",
+  "cache.m1.large"=&gt;"7100",
+  "cache.m1.medium"=&gt;"3350",
+  "cache.m1.small"=&gt;"1300",
+  "cache.m1.xlarge"=&gt;"14600",
+  "cache.m2.2xlarge"=&gt;"33800",
+  "cache.m2.4xlarge"=&gt;"68000",
+  "cache.m2.xlarge"=&gt;"16700",
+  "cache.m3.2xlarge"=&gt;"28600",
+  "cache.m3.large"=&gt;"6200",
+  "cache.m3.medium"=&gt;"2850",
+  "cache.m3.xlarge"=&gt;"13600",
+  "cache.m4.10xlarge"=&gt;"158355",
+  "cache.m4.2xlarge"=&gt;"30412",
+  "cache.m4.4xlarge"=&gt;"62234",
+  "cache.m4.large"=&gt;"6573",
+  "cache.m4.xlarge"=&gt;"14618",
+  "cache.r3.2xlarge"=&gt;"59600",
+  "cache.r3.4xlarge"=&gt;"120600",
+  "cache.r3.8xlarge"=&gt;"242600",
+  "cache.r3.large"=&gt;"13800",
+  "cache.r3.xlarge"=&gt;"29100",
+  "cache.t1.micro"=&gt;"213",
+  "cache.t2.medium"=&gt;"3301",
+  "cache.t2.micro"=&gt;"555",
+  "cache.t2.small"=&gt;"1588",
+  "dax.r3.2xlarge"=&gt;"59600",
+  "dax.r3.4xlarge"=&gt;"120600",
+  "dax.r3.8xlarge"=&gt;"242600",
+  "dax.r3.large"=&gt;"13800",
+  "dax.r3.xlarge"=&gt;"29100"
+}
+
+# elasticache.describe_cache_parameters(cache_parameter_group_name: "default.redis2.8").
+#   cache_node_type_specific_parameters.detect {|param| param.parameter_name == "maxmemory" }.
+#   cache_node_type_specific_values.map {|value| [value.cache_node_type, value.value] }.to_h
+
+redis_max_memories = {
+  "cache.c1.xlarge"=&gt;"6501171200",
+  "cache.m1.large"=&gt;"7025459200",
+  "cache.m1.medium"=&gt;"3093299200",
+  "cache.m1.small"=&gt;"943718400",
+  "cache.m1.xlarge"=&gt;"14889779200",
+  "cache.m2.2xlarge"=&gt;"35022438400",
+  "cache.m2.4xlarge"=&gt;"70883737600",
+  "cache.m2.xlarge"=&gt;"17091788800",
+  "cache.m3.2xlarge"=&gt;"29989273600",
+  "cache.m3.large"=&gt;"6501171200",
+  "cache.m3.medium"=&gt;"2988441600",
+  "cache.m3.xlarge"=&gt;"14260633600",
+  "cache.m4.10xlarge"=&gt;"166047614239",
+  "cache.m4.2xlarge"=&gt;"31889126359",
+  "cache.m4.4xlarge"=&gt;"65257290629",
+  "cache.m4.large"=&gt;"6892593152",
+  "cache.m4.xlarge"=&gt;"15328501760",
+  "cache.r3.2xlarge"=&gt;"62495129600",
+  "cache.r3.4xlarge"=&gt;"126458265600",
+  "cache.r3.8xlarge"=&gt;"254384537600",
+  "cache.r3.large"=&gt;"14470348800",
+  "cache.r3.xlarge"=&gt;"30513561600",
+  "cache.t1.micro"=&gt;"142606336",
+  "cache.t2.medium"=&gt;"3461349376",
+  "cache.t2.micro"=&gt;"581959680",
+  "cache.t2.small"=&gt;"1665138688",
+  "dax.r3.2xlarge"=&gt;"62495129600",
+  "dax.r3.4xlarge"=&gt;"126458265600",
+  "dax.r3.8xlarge"=&gt;"254384537600",
+  "dax.r3.large"=&gt;"14470348800",
+  "dax.r3.xlarge"=&gt;"30513561600"
+}
+
+elasticache = Aws::ElastiCache::Client.new(region: "ap-northeast-1")
+cache_clusters = elasticache.describe_cache_clusters(show_cache_node_info: true).cache_clusters
+cache_clusters.each do |cluster|
+  if cluster.engine == "memcached"
+    max_memory = memcached_max_memories[cluster.cache_node_type].to_i * 1024**2
+  else
+    max_memory = redis_max_memories[cluster.cache_node_type].to_i
+  end
+  cluster.cache_nodes.each do |node|
+    puts %(aws_elasticache_max_memory_bytes{cache_cluster_id="#{cluster.cache_cluster_id}",cache_node_id="#{node.cache_node_id}"} #{max_memory})
+  end
+end
+</code></pre>
+
+<p>出力はこんな感じ。</p>
+
+<pre><code>aws_elasticache_max_memory_bytes{cache_cluster_id="memcache-example",cache_node_id="0001"} 581959680
+</code></pre>
+
+<p>これをnode_exporter経由で取得した値と、cloudwatch_exporterで取得した値ではラベルが違うので、<code>metric_relabel_configs</code>を使って同じになるように調整する必要がある。
+exporter側でjobとinstanceを設定してもprometheusで読み込むときにprefixを付けてリネームしてしまうのでこうせざるを得なかった。</p>
+
+<pre><code># prometheus.yml
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9100']
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: aws.*
+        target_label: job
+        replacement: cloudwatch
+      - source_labels: [cache_cluster_id, cache_node_id]
+        regex: (.+);(.+)
+        target_label: instance
+        replacement: cache.${1}.${2}
+  - job_name: 'cloudwatch'
+    static_configs:
+      - targets: ['localhost:9106']
+    metric_relabel_configs:
+      - source_labels: [cache_cluster_id, cache_node_id]
+        regex: (.+);(.+)
+        target_label: instance
+        replacement: cache.${1}.${2}
+      - action: labeldrop
+        regex: exported_job
+</code></pre>
+
+<p>あとはアラートのruleを設定するだけ。</p>
+
+<pre><code>ALERT elasticache_memcached_used_memory
+  IF aws_elasticache_bytes_used_for_cache_items_average / aws_elasticache_max_memory_bytes &gt; 0.8
+  LABELS { severity = "warning" }
+  ANNOTATIONS {
+    summary = "Used memory is large",
+    description = "(): B"
+  }
+
+ALERT elasticache_redis_used_memory
+  IF aws_elasticache_bytes_used_for_cache_average / aws_elasticache_max_memory_bytes &gt; 0.5
+  LABELS { severity = "warning" }
+  ANNOTATIONS {
+    summary = "Used memory is large",
+    description = "(): B"
+  }
+</code></pre>
+
+<p>はじめはredis,memcached共通で使える<code>aws_elasticache_freeable_memory_average</code>を使って設定したら1.4とかふざけた値になったので、使用量を元に計算するように変更した。
+これって自分の環境だけなのかな…</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[prometheus, blackbox_exporter, komachi_heartbeat]]></title>
